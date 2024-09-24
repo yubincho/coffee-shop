@@ -13,7 +13,9 @@ import com.example.coffeeOrderService.service.cart.CartService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.cglib.core.Local;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -36,15 +38,29 @@ public class OrderService {
     public Order placeOrder(Long userId) {
         Cart cart = cartService.getCartByUserId(userId);
 
-        Order order = createOrder(cart);  //
-        List<OrderItem> orderItems = createOrderItems(order, cart);
+        Order order = createOrder(cart);  // 주문 생성
+        List<OrderItem> orderItems = createOrderItems(order, cart); // 장바구니 항목을 주문 항목으로 변환
         order.setOrderItems(new HashSet<>(orderItems));
         order.setTotalAmount(calculateToTalAmount(orderItems));
-        Order orderSaved = orderRepository.save(order);
+        Order orderSaved = orderRepository.save(order); // 주문 저장
 
-        cartService.clearCart(cart.getId());
+        cartService.clearCart(cart.getId()); // 장바구니 비우기
+
+        // 재고 업데이트를 비동기 처리로 분리 (병목 방지)
+//        updateProductInventory(orderItems);
 
         return orderSaved;
+    }
+
+    // 비동기 재고 업데이트 메서드
+    @Async  // 비동기로 실행하여 메인 트랜잭션을 차단하지 않음
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateProductInventory(List<OrderItem> orderItems) {
+        orderItems.forEach(orderItem -> {
+            Product product = orderItem.getProduct();
+            product.setInventory(product.getInventory() - orderItem.getQuantity());
+            productRepository.save(product);
+        });
     }
 
     private BigDecimal calculateToTalAmount(List<OrderItem> orderItems) {
@@ -63,12 +79,12 @@ public class OrderService {
 
     // Cart 객체에서 **장바구니 항목(CartItem)**을 가져와, 이를 **주문 항목(OrderItem)**으로 변환
     private List<OrderItem> createOrderItems(Order order, Cart cart) {
-        return cart.getCartItems().stream()
+        return cart.getCartItems().parallelStream()   // 병렬 스트림 사용
                 .map(cartItem -> {
                     // 각 CartItem에서 상품(Product) 정보를 가져옴
                     Product product = cartItem.getProduct();
                     // 현재 상품의 재고를 가져와서, 사용자가 구매한 수량만큼 재고에서 차감하고, 그 결과를 데이터베이스에 저장
-                    product.setInventory(product.getInventory() - cartItem.getQuantity());
+                    product.setInventory(product.getInventory() - cartItem.getQuantity()); // ***
                     productRepository.save(product);
                     return new OrderItem(
                             order,

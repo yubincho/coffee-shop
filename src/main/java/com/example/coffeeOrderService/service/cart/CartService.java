@@ -7,6 +7,8 @@ import com.example.coffeeOrderService.model.cart.CartRepository;
 import com.example.coffeeOrderService.model.cartItem.CartItemRepository;
 import com.example.coffeeOrderService.model.user.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CartService {
@@ -61,13 +64,22 @@ public class CartService {
     }
 
 
+    // N+1 문제 해결 : JOIN FETCH -> 한 번의 쿼리로 가져올 수 있음
     public Cart getCartByUserId(Long userId) {
+//        log.info("Fetching cart for userId: {}", userId);
+//        return cartRepository.findByUserIdWithItemsAndProducts(userId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for userId: " + userId));
         return cartRepository.findByUserId(userId);
     }
 
-    public CartDto convertToDto(Cart cart) {
-        return modelMapper.map(cart, CartDto.class);
-    }
 
+//    public CartDto convertToDto(Cart cart) {
+////        Hibernate.initialize(cart.getCartItems());  // Lazy Loading된 CartItems 강제 로드
+//        return modelMapper.map(cart, CartDto.class);
+//    }
+
+    public CartDto convertToDto(Cart cart) {
+        return CartDto.fromCart(cart);
+    }
 
 }

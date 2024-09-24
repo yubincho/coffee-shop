@@ -13,6 +13,7 @@ import com.example.coffeeOrderService.service.cart.CartService;
 import com.example.coffeeOrderService.service.product.ProductService;
 import com.example.coffeeOrderService.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,8 @@ public class CartItemController {
             Cart cart = cartService.initializeNewCart(user);
 
             cartItemService.addItemToCart(cart.getId(), productId, quantity);
-            return ResponseEntity.ok().body(new ApiResponse("Item added successfully!", null));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiResponse("Item added successfully!", null)); // test 정확성 위해 코드 201로 수정
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }

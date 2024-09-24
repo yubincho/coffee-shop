@@ -28,11 +28,14 @@ public class OrderController {
 
     @PostMapping("/user/place-order")
     public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId) {
+        log.info("Placing order for user: {}", userId);
         try {
             Order order = orderService.placeOrder(userId);
             OrderDto orderDto = orderService.convertToDto(order);
+            log.debug("Order placed successfully for user: {}", userId);
             return ResponseEntity.ok().body(new ApiResponse("Order Success!", orderDto));
         } catch (Exception e) {
+            log.error("Error while placing order for user: {}: {}", userId, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse("Error Occured!", e.getMessage()));
         }
