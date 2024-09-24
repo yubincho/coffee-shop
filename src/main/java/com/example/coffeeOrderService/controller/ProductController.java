@@ -1,5 +1,7 @@
 package com.example.coffeeOrderService.controller;
 
+import com.example.coffeeOrderService.common.pageHandler.PageRequestDto;
+import com.example.coffeeOrderService.common.pageHandler.PageResponseDto;
 import com.example.coffeeOrderService.dto.ProductDto;
 import com.example.coffeeOrderService.exception.AlreadyExistsException;
 import com.example.coffeeOrderService.model.product.Product;
@@ -9,6 +11,8 @@ import com.example.coffeeOrderService.response.ApiResponse;
 import com.example.coffeeOrderService.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,13 +30,18 @@ public class ProductController {
     private final ProductService productService;
 
 
+//    @GetMapping("/all")
+//    public ResponseEntity<?> getAllProducts(Pageable pageable) {
+//        Page<ProductDto> productDtos = productService.getAllProductDtos(pageable);
+//        ApiResponse<Page<ProductDto>> response = new ApiResponse<>("All products successfully", productDtos);
+//        return ResponseEntity.ok(response);
+//    }
+
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
-        List<ProductDto> productDtos = products.stream()
-                .map(productService::convertToDto)
-                .toList();
-        return ResponseEntity.ok(new ApiResponse("All products successfully", productDtos));
+    public ResponseEntity<?> getAllProducts(PageRequestDto pageRequestDto) {
+
+        PageResponseDto<ProductDto> productDtos = productService.getList(pageRequestDto);
+        return ResponseEntity.ok().body(new ApiResponse("Success", productDtos));
     }
 
 

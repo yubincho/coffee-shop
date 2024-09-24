@@ -1,5 +1,7 @@
 package com.example.coffeeOrderService.service.product;
 
+import com.example.coffeeOrderService.common.pageHandler.PageRequestDto;
+import com.example.coffeeOrderService.common.pageHandler.PageResponseDto;
 import com.example.coffeeOrderService.dto.ImageDto;
 import com.example.coffeeOrderService.dto.ProductDto;
 import com.example.coffeeOrderService.exception.AlreadyExistsException;
@@ -10,16 +12,24 @@ import com.example.coffeeOrderService.model.image.Image;
 import com.example.coffeeOrderService.model.image.ImageRepository;
 import com.example.coffeeOrderService.model.product.Product;
 import com.example.coffeeOrderService.model.product.ProductRepository;
+import com.example.coffeeOrderService.model.product.QProduct;
 import com.example.coffeeOrderService.request.AddProductRequest;
 
 import com.example.coffeeOrderService.request.UpdateProductRequest;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -56,11 +66,6 @@ public class ProductService {
                 .inventory(request.getInventory())
                 .category(category)
                 .build());
-    }
-
-
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
     }
 
 
@@ -101,6 +106,63 @@ public class ProductService {
         }
     }
 
+
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+
+    public Page<ProductDto> getAllProductDtos(Pageable pageable) {
+        Page<Product> productPage = getAllProducts(pageable);  // 실제 Product 목록 가져오기
+        return productPage.map(this::convertToDto);  // Product를 ProductDto로 변환하는 메서드
+    }
+
+
+    // 페이징 + 검색 적용
+    public PageResponseDto<ProductDto> getList(PageRequestDto pageRequestDto) {
+        Pageable pageable = pageRequestDto.getPageable(Sort.by("id").descending());
+
+        BooleanBuilder booleanBuilder = getSearch(pageRequestDto);
+
+        Page<Product> result = productRepository.findAll(booleanBuilder, pageable);
+        Page<ProductDto> dtoPage = result.map(this::convertToDto);
+        return new PageResponseDto<>(dtoPage);
+    }
+
+    private BooleanBuilder getSearch(PageRequestDto pageRequestDto) {
+        String type = pageRequestDto.getType();
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        QProduct qProduct = QProduct.product;
+        String keyword = pageRequestDto.getKeyword();
+        BooleanExpression expression = qProduct.id.gt(0L);
+
+        if (type == null || type.isEmpty()) {
+            return booleanBuilder;
+        }
+
+        BooleanBuilder conditionBuilder = new BooleanBuilder();
+
+        if(type.contains("t")){
+            conditionBuilder.or(qProduct.name.contains(keyword));
+        }
+        if(type.contains("c")){
+            conditionBuilder.or(qProduct.description.contains(keyword));
+        }
+
+        if(type.contains("w")){
+            conditionBuilder.or(qProduct.brand.contains(keyword));
+        }
+
+        booleanBuilder.and(conditionBuilder);
+        return booleanBuilder;
+    }
+
+
+//    public List<ProductDto> getAllProductDtos() {
+//        List<Product> products = getAllProducts();  // 실제 Product 목록 가져오기
+//        return products.stream()
+//                .map(this::convertToDto)  // Product를 ProductDto로 변환하는 메서드
+//                .collect(Collectors.toList());
+//    }
 
 
     public ProductDto convertToDto(Product product) {
