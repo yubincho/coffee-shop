@@ -133,7 +133,8 @@ public class ProductService {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         QProduct qProduct = QProduct.product;
         String keyword = pageRequestDto.getKeyword();
-        BooleanExpression expression = qProduct.id.gt(0L);
+        BooleanExpression expression = qProduct.id.gt(0L);  // id > 0 조건만
+        booleanBuilder.and(expression);
 
         if (type == null || type.isEmpty()) {
             return booleanBuilder;
@@ -147,7 +148,6 @@ public class ProductService {
         if(type.contains("c")){
             conditionBuilder.or(qProduct.description.contains(keyword));
         }
-
         if(type.contains("w")){
             conditionBuilder.or(qProduct.brand.contains(keyword));
         }
