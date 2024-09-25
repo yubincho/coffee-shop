@@ -9,7 +9,9 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,8 +35,14 @@ public class JwtProvider {
     @Value("${auth.token.jwtSecret}")
     private String jwtSecret;
 
-    private final UserService userService;
+    private UserService userService;
     private final RefreshTokenRepository refreshTokenRepository;
+
+    // UserService에 Setter 주입 적용
+    @Autowired
+    public void setUserService(@Lazy UserService userService) {
+        this.userService = userService;
+    }
 
     // 토큰 유효기간
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);  // Access Token: 1일
@@ -125,7 +133,7 @@ public class JwtProvider {
         return generateAccessTokenForUser(authentication);
     }
 
-    // JWT에서 유저네임 추출
+    // JWT에서 유저네임 추출 -> email 추출로 설정함
     public String getUsernameFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key())

@@ -36,6 +36,8 @@ public class User implements UserDetails {
 
     private String address;
 
+    private boolean isOAuth2;  // OAuth2 사용자인지 구분
+
     /** ****************************************************************/
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -59,7 +61,7 @@ public class User implements UserDetails {
     }
 
     // Nickname 변경
-    public User changeNickname(String nickname) {
+    public User update(String nickname) {
         this.nickname = nickname;
         return this;
     }
@@ -69,7 +71,20 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.roles = roles;
+        this.isOAuth2 = false;  // 기본적으로 이메일/비밀번호 사용자는 OAuth2가 아님
     }
+
+    // 새로운 생성자: 구글 OAuth2 로그인용 (비밀번호 대신 닉네임을 설정)
+    public User(String email, String nickname, Collection<Role> roles, boolean isOAuth2) {
+        this.email = email;
+        this.nickname = nickname;
+        this.roles = roles;
+        this.isOAuth2 = isOAuth2;  // OAuth2 여부를 구분
+        if (isOAuth2) {
+            this.password = null;  // OAuth2 사용자는 비밀번호가 없음
+        }
+    }
+
 
     /** Security ******************************************************************************* */
 

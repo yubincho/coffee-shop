@@ -13,6 +13,7 @@ import com.example.coffeeOrderService.request.LogOutRequest;
 import com.example.coffeeOrderService.request.LoginRequest;
 import com.example.coffeeOrderService.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,11 +34,13 @@ import java.util.Set;
 public class AuthService {
 
     private final UserRepository userRepository;
+    @Lazy
     private final UserService userService;
 
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
+    @Lazy
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 

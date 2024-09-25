@@ -30,6 +30,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final BooleanPath isOAuth2 = createBoolean("isOAuth2");
+
     public final StringPath nickname = createString("nickname");
 
     public final ListPath<com.example.coffeeOrderService.model.order.Order, com.example.coffeeOrderService.model.order.QOrder> orders = this.<com.example.coffeeOrderService.model.order.Order, com.example.coffeeOrderService.model.order.QOrder>createList("orders", com.example.coffeeOrderService.model.order.Order.class, com.example.coffeeOrderService.model.order.QOrder.class, PathInits.DIRECT2);

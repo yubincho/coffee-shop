@@ -1,16 +1,64 @@
-1. 로그인, 페이징 + 검색 
+1. 로그인, 페이징 + 검색
 
 2. 부하 테스트 - 결과 문서화
-3. 부하 테스트 후 코드 수정 - 캐싱, 커서, 데이터베이스 교체 등 
+3. 부하 테스트 후 코드 수정 - 캐싱, 커서, 데이터베이스 교체 등
 4. 다시 부하 테스트 - 결과 문서화
 
-5. 카프카 
-6. 배치 
+5. 카프카
+6. 배치
 
-7. 배포 
+7. 배포
  - 도커
  - 젠킨스, CI/CD (깃헙 웹훅)
  - ELK Stack
+
+
+--------------------------------------------------------------------------------------------------
+
+순환 참조 오류 발생
+
+┌─────┐
+|  coffeeShopConfig defined in file [C:\Users\user\Documents\coffeeOrderService\coffeeOrderService\build\classes\java\main\com\example\coffeeOrderService\common\config\CoffeeShopConfig.class]
+↑     ↓
+|  jwtProvider defined in file [C:\Users\user\Documents\coffeeOrderService\coffeeOrderService\build\classes\java\main\com\example\coffeeOrderService\common\auth\jwt\JwtProvider.class]
+↑     ↓
+|  userService defined in file [C:\Users\user\Documents\coffeeOrderService\coffeeOrderService\build\classes\java\main\com\example\coffeeOrderService\service\user\UserService.class]
+└─────┘
+
+
+Action:
+
+Relying upon circular references is discouraged and they are prohibited by default.
+Update your application to remove the dependency cycle between beans. As a last resort,
+it may be possible to break the cycle automatically by setting spring.main.allow-circular-references to true.
+
+[ 문제 해결 ]
+순환 참조 문제는 구조적으로 한 쪽에서 의존성 주입 방식을 변경함으로써 해결할 수 있다.
+이를 해결하는 일반적인 방법 중 하나는 생성자 주입 대신
+@Autowired 또는 @Lazy 사용이나 Setter 주입 방식으로 일부 의존성을 느리게 주입하여 순환을 방지
+
+    @Lazy
+    private final JwtProvider jwtProvider;  // @Lazy로 지연 주입
+
+    @Lazy
+    private JwtProvider jwtProvider;
+
+    또는
+
+     @Autowired
+     public void setUserService(@Lazy UserService userService) {
+         this.userService = userService;
+     }
+
+     @Autowired
+     public void setUserService(UserService userService) {
+          this.userService = userService;
+     }
+
+결론:
+- @Lazy 사용: 순환 참조가 발생하는 의존성에 @Lazy를 추가해 지연 주입을 사용하는 것이 가장 간단한 해결책
+- Setter 주입 사용: 순환 참조가 발생하는 빈에 대해 생성자 주입을 Setter 주입 방식으로 변경할 수 있다.
+- 의존성 분리: 더 근본적으로 의존성을 재설계하여 결합도를 낮출 수 있다.(프로젝트 복잡해질 수 있음)
 
 
 --------------------------------------------------------------------------------------------------
@@ -76,6 +124,12 @@ ExpiredJwtException은 위와 같이 기본적으로 만료 시각, 현재 시�
 
 따라서, "JWT expired"라는 문구는 ExpiredJwtException에 기본적으로 포함된 메시지이므로,
 이 예외가 발생할 때 그 메시지를 통해 만료 사실을 알 수 있습니다.
+
+
+----------------------------------------------------------------------------------------------------
+
+구글 Oauth2 로그인
+http://localhost:8080/oauth2/authorization/google
 
 
 -----------------------------------------------------------------------------------------------------

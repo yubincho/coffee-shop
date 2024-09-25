@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 
 @NoArgsConstructor
@@ -26,8 +27,19 @@ public class RefreshToken {
     @Column(name = "refresh_token", nullable = false)
     private String refreshToken;
 
-    @Column(nullable = false)
     private Instant expiryDate;
+
+
+    public RefreshToken(Long userId, String refreshToken) {
+        this.userId = userId;
+        this.refreshToken = refreshToken;
+    }
+
+    public RefreshToken update(String newRefreshToken) {
+        this.refreshToken = newRefreshToken;
+        this.expiryDate = Instant.now().plus(7, ChronoUnit.DAYS);  // 새 만료 시간 설정
+        return this;
+    }
 
 
 }

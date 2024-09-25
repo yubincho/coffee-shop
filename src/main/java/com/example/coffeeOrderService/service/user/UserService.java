@@ -31,6 +31,15 @@ public class UserService {
                 .build());
     }
 
+    public User oauthSave(User entity) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        return userRepository.save(User.builder()
+                .email(entity.getEmail())
+                .password(encoder.encode(entity.getPassword()))
+                .build());
+    }
+
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
