@@ -53,7 +53,15 @@ public class JwtProvider {
             return generateToken(userPrincipal, ACCESS_TOKEN_DURATION);
         } else if (authentication.getPrincipal() instanceof UserDetails) {
             // 일반 이메일 사용자
-            User userPrincipal = (User) authentication.getPrincipal();
+//            User userPrincipal = (User) authentication.getPrincipal();
+            // 일반 사용자 처리
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String email = userDetails.getUsername();  // UserDetails에서 이메일 가져옴
+
+            // 이메일로 User 엔티티 조회
+            User userPrincipal = userService.findByEmail(email)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+
             return generateToken(userPrincipal, ACCESS_TOKEN_DURATION);
         }
 

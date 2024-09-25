@@ -10,7 +10,73 @@
 7. 배포 
  - 도커
  - 젠킨스, CI/CD (깃헙 웹훅)
- - ELK Stack  
+ - ELK Stack
+
+
+--------------------------------------------------------------------------------------------------
+
+jakarta.persistence.TransactionRequiredException:
+No EntityManager with actual transaction available for current thread
+- cannot reliably process 'remove' call 에러 발생
+
+이 에러는 **TransactionRequiredException**으로, **JPA 삭제 작업 (delete)**을 수행할 때
+트랜잭션이 활성화되지 않은 상태에서 작업을 시도했기 때문에 발생한 문제입니다.
+JPA는 삭제, 저장 등의 데이터베이스 수정 작업이 트랜잭션 안에서만 이루어져야 하기 때문에, 트랜잭션이 없으면 예외가 발생합니다.
+
+[ 해결 방법 ]
+@Transactional 어노테이션을 추가
+- 로그인과 로그아웃 메서드에도 추가해줘야 함 ! ***
+--> 왜냐면, 로그인, 로그아웃 메서드에 JPA의 데이터 저장, 삭제 등이 이루어지기 때문 !
+
+    @Transactional  //
+    public String login(LoginRequest loginRequest) { ...
+
+    @Transactional  // 이 메서드도 트랜잭션 내에서 실행되도록 지정
+    private void saveRefreshToken(User user, String refreshToken) { ...
+
+    @Transactional  // 트랜잭션을 적용하여 삭제 작업 처리
+    public void logout(LogOutRequest logoutRequest) { ...
+
+
+---------------------------------------------------------------------------------------------------
+
+[ (JWT 기반) 인증 시스템 전체 흐름 ] - Oauth2 기능 추가 예정
+회원가입/로그인 → JWT 생성 → 사용자 요청 시 AuthTokenFilter에서 JWT 검증 → 검증 통과 시 사용자 인증 완료.
+예외 발생 시 JwtAuthEntryPoint에서 적절한 401 응답 처리
+
+
+ [ 로그인 로직 구성 ] - () 내가 아는 범위 내 적합한 방법으로 구성하였음
+ 1. 리프레시 토큰을 데이터베이스에 저장: 사용자 로그인 시 발급된 리프레시 토큰을 데이터베이스에 저장하고, 만료 시간을 설정합니다.
+ 2. 리프레시 토큰 검증: 리프레시 토큰이 만료되거나 유효하지 않으면 토큰을 삭제하고, 사용자는 다시 로그인을 해야 합니다.
+ 3. 리프레시 토큰 만료 시 자동 로그아웃: 리프레시 토큰이 만료되면 서버는 로그아웃 처리 또는 강제 재로그인을 요구합니다.
+
+- 클라이언트 측에서의 처리
+리프레시 토큰이 만료되었을 경우 서버는 401 Unauthorized 상태 코드와 함께 "Refresh token expired" 메시지를 반환합니다.
+클라이언트는 로그아웃 처리를 하고, 로그인 페이지로 리다이렉션하거나 다시 로그인을 요구하는 방식으로 처리할 수 있습니다.
+
+
+---------------------------------------------------------------------------------------------------
+
+[ ExpiredJwtException 메시지 ]
+
+try {
+    Jwts.parserBuilder()
+        .setSigningKey(secretKey)
+        .build()
+        .parseClaimsJws(token);  // 만료된 토큰을 검증할 때
+} catch (ExpiredJwtException e) {
+    System.out.println(e.getMessage());
+    // 출력 예시: JWT expired at 2024-09-18T14:04:02Z.
+    Current time: 2024-09-25T14:04:02Z, a difference of 604800522 milliseconds.
+    Allowed clock skew: 0 milliseconds.
+}
+
+ExpiredJwtException은 위와 같이 기본적으로 만료 시각, 현재 시각, 그리고 만료된 시간을 포함하는 상세한 메시지를 제공합니다.
+이 메시지는 validateToken에서 잡히는 예외 메시지입니다.
+
+따라서, "JWT expired"라는 문구는 ExpiredJwtException에 기본적으로 포함된 메시지이므로,
+이 예외가 발생할 때 그 메시지를 통해 만료 사실을 알 수 있습니다.
+
 
 -----------------------------------------------------------------------------------------------------
 

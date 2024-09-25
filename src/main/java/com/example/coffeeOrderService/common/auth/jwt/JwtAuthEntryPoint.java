@@ -14,7 +14,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * 인증되지 않은 사용자에게 401 Unauthorized 응답을 처리
+ * commence 메서드를 통해 인증 실패 시 적절한 메시지와 상태 코드를 반환
+ * */
 @Component
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
 

@@ -73,12 +73,13 @@ public class CoffeeShopConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(AbstractHttpConfigurer::disable)
+        http.csrf(AbstractHttpConfigurer::disable) // 배포시 활성화 필요
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(SECURED_URLS.toArray(String[]::new)).authenticated()
                         .anyRequest().permitAll());
 
+        // JWT 인증을 수행
         http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
 
@@ -86,6 +87,10 @@ public class CoffeeShopConfig {
         return http.build();
     }
 
+    /**
+     * authenticationManager 설정
+     * DaoAuthenticationProvider 가 사용자 인증을 처리
+     * */
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailService userDetailService) throws Exception {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();

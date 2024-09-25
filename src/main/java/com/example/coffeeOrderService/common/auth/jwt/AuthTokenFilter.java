@@ -17,6 +17,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+
+/**
+ * JWT 토큰을 파싱, 사용자 인증 정보를 컨텍스트에 설정
+ * */
 public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired

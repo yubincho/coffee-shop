@@ -4,6 +4,7 @@ import com.example.coffeeOrderService.common.auth.jwt.JwtProvider;
 import com.example.coffeeOrderService.common.auth.refreshToken.RefreshToken;
 import com.example.coffeeOrderService.common.auth.refreshToken.RefreshTokenRepository;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
+import com.example.coffeeOrderService.model.user.Role;
 import com.example.coffeeOrderService.request.AddUserRequest;
 import com.example.coffeeOrderService.common.exception.AlreadyExistsException;
 import com.example.coffeeOrderService.model.user.User;
@@ -24,6 +25,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 
 
 @RequiredArgsConstructor
@@ -32,8 +34,10 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final UserService userService;
+
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -48,9 +52,13 @@ public class AuthService {
             throw new IllegalArgumentException("비밀번호가 비밀번호 확인과 다릅니다.");
         }
 
+        // 기본 Role 직접 생성 ("USER" 역할 부여)
+        Role roleUser = new Role("USER");
+
         userRepository.save(User.builder()
                 .email(addUserRequest.getEmail())
                 .password(passwordEncoder.encode(addUserRequest.getPassword()))
+                .roles(Set.of(roleUser))  // User 역할을 Set으로 설정
                 .build());
     }
 

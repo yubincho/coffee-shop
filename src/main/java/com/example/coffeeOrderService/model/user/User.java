@@ -65,9 +65,10 @@ public class User implements UserDetails {
     }
 
     @Builder
-    public User(String email, String password, String auth) {
+    public User(String email, String password, Collection<Role> roles) {
         this.email = email;
         this.password = password;
+        this.roles = roles;
     }
 
     /** Security ******************************************************************************* */
