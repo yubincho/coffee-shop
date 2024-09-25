@@ -12,6 +12,7 @@ import com.example.coffeeOrderService.model.user.UserRepository;
 import com.example.coffeeOrderService.request.LogOutRequest;
 import com.example.coffeeOrderService.request.LoginRequest;
 import com.example.coffeeOrderService.service.user.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,6 +46,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
 
+    // 이메일 가입 
     @Transactional
     public void signUp(AddUserRequest addUserRequest) {
         userRepository.findByEmail(addUserRequest.getEmail()).ifPresent(it -> {
@@ -66,6 +68,7 @@ public class AuthService {
     }
 
 
+    // 이메일 가입 사용자 로그아웃
     @Transactional  // 트랜잭션을 적용하여 삭제 작업 처리
     public void logout(LogOutRequest logoutRequest) {
         User user = userService.findByEmail(logoutRequest.getEmail())
@@ -75,7 +78,36 @@ public class AuthService {
         refreshTokenRepository.deleteByUserId(user.getId());
     }
 
+    // OAuth 사용자 로그아웃
+    @Transactional
+    public void oauthLogout(HttpServletRequest request) {
+        String token = extractJwtFromRequest(request);
+        System.out.println("Extracted token: " + token);
+        // JWT 토큰이 유효한지 검증
+        if (token == null || !jwtProvider.validateToken(token)) {
+            throw new IllegalArgumentException("Invalid or expired JWT token");
+        }
 
+        String email = jwtProvider.getUsernameFromToken(token);
+        System.out.println("Extracted email from token: " + email);
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        System.out.println("Found user: " + user.getEmail());
+
+        refreshTokenRepository.deleteByUserId(user.getId());
+        // SecurityContext 초기화
+        SecurityContextHolder.clearContext();  // 인증 정보 제거
+    }
+
+    private String extractJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);  // "Bearer " 이후의 JWT 토큰 부분만 추출
+        }
+        return null;
+    }
+
+
+    // 이메일 로그인
     @Transactional
     public String login(LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(

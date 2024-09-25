@@ -17,6 +17,7 @@ import com.example.coffeeOrderService.response.JwtResponse;
 import com.example.coffeeOrderService.service.user.UserService;
 import io.jsonwebtoken.JwtException;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -47,10 +48,18 @@ public class AuthController {
     }
 
 
-    // User 가 직접 로그아웃 할 때
+    // User(이메일 가입) 가 직접 로그아웃 할 때
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse> logout(@RequestBody LogOutRequest logoutRequest) {
         authService.logout(logoutRequest);
+        return ResponseEntity.ok(new ApiResponse("Logged out successfully", null));
+    }
+
+
+    // OAuth 사용자 로그아웃
+    @PostMapping("/oauth-logout")
+    public ResponseEntity<?> oauthLogout(HttpServletRequest request) {
+        authService.oauthLogout(request);
         return ResponseEntity.ok(new ApiResponse("Logged out successfully", null));
     }
 
