@@ -2,7 +2,7 @@ package com.example.coffeeOrderService.service.image;
 
 
 import com.example.coffeeOrderService.dto.ImageDto;
-import com.example.coffeeOrderService.exception.ResourceNotFoundException;
+import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.model.image.Image;
 import com.example.coffeeOrderService.model.image.ImageRepository;
 import com.example.coffeeOrderService.model.product.Product;

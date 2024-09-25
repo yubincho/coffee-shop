@@ -1,7 +1,7 @@
 package com.example.coffeeOrderService.controller;
 
 import com.example.coffeeOrderService.dto.CartDto;
-import com.example.coffeeOrderService.exception.ResourceNotFoundException;
+import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.model.cart.Cart;
 import com.example.coffeeOrderService.response.ApiResponse;
 import com.example.coffeeOrderService.service.cart.CartService;

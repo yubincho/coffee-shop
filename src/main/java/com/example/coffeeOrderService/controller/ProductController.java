@@ -3,7 +3,7 @@ package com.example.coffeeOrderService.controller;
 import com.example.coffeeOrderService.common.pageHandler.PageRequestDto;
 import com.example.coffeeOrderService.common.pageHandler.PageResponseDto;
 import com.example.coffeeOrderService.dto.ProductDto;
-import com.example.coffeeOrderService.exception.AlreadyExistsException;
+import com.example.coffeeOrderService.common.exception.AlreadyExistsException;
 import com.example.coffeeOrderService.model.product.Product;
 import com.example.coffeeOrderService.request.AddProductRequest;
 import com.example.coffeeOrderService.request.UpdateProductRequest;
@@ -11,12 +11,8 @@ import com.example.coffeeOrderService.response.ApiResponse;
 import com.example.coffeeOrderService.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 

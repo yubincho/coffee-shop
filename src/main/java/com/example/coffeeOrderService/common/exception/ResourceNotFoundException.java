@@ -1,4 +1,4 @@
-package com.example.coffeeOrderService.exception;
+package com.example.coffeeOrderService.common.exception;
 
 public class ResourceNotFoundException extends RuntimeException{
 

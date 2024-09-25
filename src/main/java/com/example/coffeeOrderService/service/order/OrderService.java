@@ -1,7 +1,7 @@
 package com.example.coffeeOrderService.service.order;
 
 import com.example.coffeeOrderService.dto.OrderDto;
-import com.example.coffeeOrderService.exception.ResourceNotFoundException;
+import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.model.cart.Cart;
 import com.example.coffeeOrderService.model.order.Order;
 import com.example.coffeeOrderService.model.order.OrderRepository;
@@ -12,7 +12,6 @@ import com.example.coffeeOrderService.model.product.ProductRepository;
 import com.example.coffeeOrderService.service.cart.CartService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.cglib.core.Local;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

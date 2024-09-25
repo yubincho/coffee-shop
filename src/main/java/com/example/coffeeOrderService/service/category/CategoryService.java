@@ -1,7 +1,7 @@
 package com.example.coffeeOrderService.service.category;
 
-import com.example.coffeeOrderService.exception.AlreadyExistsException;
-import com.example.coffeeOrderService.exception.ResourceNotFoundException;
+import com.example.coffeeOrderService.common.exception.AlreadyExistsException;
+import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.model.category.Category;
 import com.example.coffeeOrderService.model.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;

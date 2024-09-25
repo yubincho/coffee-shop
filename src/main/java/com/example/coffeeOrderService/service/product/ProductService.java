@@ -4,8 +4,8 @@ import com.example.coffeeOrderService.common.pageHandler.PageRequestDto;
 import com.example.coffeeOrderService.common.pageHandler.PageResponseDto;
 import com.example.coffeeOrderService.dto.ImageDto;
 import com.example.coffeeOrderService.dto.ProductDto;
-import com.example.coffeeOrderService.exception.AlreadyExistsException;
-import com.example.coffeeOrderService.exception.ResourceNotFoundException;
+import com.example.coffeeOrderService.common.exception.AlreadyExistsException;
+import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.model.category.Category;
 import com.example.coffeeOrderService.model.category.CategoryRepository;
 import com.example.coffeeOrderService.model.image.Image;
@@ -20,8 +20,6 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -29,7 +27,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor

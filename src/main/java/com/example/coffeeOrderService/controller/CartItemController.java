@@ -1,21 +1,15 @@
 package com.example.coffeeOrderService.controller;
 
-import com.example.coffeeOrderService.exception.ResourceNotFoundException;
+import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.model.cart.Cart;
-import com.example.coffeeOrderService.model.cart.CartRepository;
-import com.example.coffeeOrderService.model.cartItem.CartItem;
-import com.example.coffeeOrderService.model.cartItem.CartItemRepository;
-import com.example.coffeeOrderService.model.product.Product;
 import com.example.coffeeOrderService.model.user.User;
 import com.example.coffeeOrderService.response.ApiResponse;
 import com.example.coffeeOrderService.service.cart.CartItemService;
 import com.example.coffeeOrderService.service.cart.CartService;
-import com.example.coffeeOrderService.service.product.ProductService;
 import com.example.coffeeOrderService.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;

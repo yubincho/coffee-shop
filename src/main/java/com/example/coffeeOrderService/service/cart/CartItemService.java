@@ -1,6 +1,6 @@
 package com.example.coffeeOrderService.service.cart;
 
-import com.example.coffeeOrderService.exception.ResourceNotFoundException;
+import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.model.cart.Cart;
 import com.example.coffeeOrderService.model.cart.CartRepository;
 import com.example.coffeeOrderService.model.cartItem.CartItem;
