@@ -85,7 +85,7 @@ class AuthControllerTest {
     @DisplayName("구글 사용자 로그아웃시 RefreshToken 삭제된다.")
     @Test
     void oauth_user_logout() throws Exception {
-
+        // given
         final String url = "/api/v1/users/oauth-logout";
 
         String refreshToken = createRefreshToken();
@@ -97,11 +97,13 @@ class AuthControllerTest {
         context.setAuthentication(new UsernamePasswordAuthenticationToken(user, refreshToken, user.getAuthorities()));
         System.out.println("[user.getId()]" + user.getId());
 
+        // when
         // Authorization 헤더에 JWT 토큰을 포함하여 요청
         ResultActions resultActions = mockMvc.perform(post(url)
                 .header("Authorization", "Bearer " + refreshToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
+        // then
         resultActions.andExpect(status().isOk());
 
         assertThat(refreshTokenRepository.findByRefreshToken(refreshToken)).isEmpty();

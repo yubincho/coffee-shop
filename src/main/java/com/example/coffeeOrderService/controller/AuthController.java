@@ -33,12 +33,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("${api.prefix}/users")
 public class AuthController {
 
-    private final UserService userService;
     private final AuthService authService;
-    private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
-
 
 
     @PostMapping("/signup")
@@ -50,7 +46,7 @@ public class AuthController {
 
     // User(이메일 가입) 가 직접 로그아웃 할 때
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse> logout(@RequestBody LogOutRequest logoutRequest) {
+    public ResponseEntity<?> logout(@RequestBody LogOutRequest logoutRequest) {
         authService.logout(logoutRequest);
         return ResponseEntity.ok(new ApiResponse("Logged out successfully", null));
     }
@@ -82,6 +78,7 @@ public class AuthController {
 //
 //    }
 
+    // 이메일 가입한 사용자 로그인
     @PostMapping("/login")
     public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request) {
         try {

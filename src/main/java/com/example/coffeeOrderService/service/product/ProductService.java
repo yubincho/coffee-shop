@@ -109,48 +109,55 @@ public class ProductService {
     }
 
     public Page<ProductDto> getAllProductDtos(Pageable pageable) {
-        Page<Product> productPage = getAllProducts(pageable);  // 실제 Product 목록 가져오기
-        return productPage.map(this::convertToDto);  // Product를 ProductDto로 변환하는 메서드
+        Page<Product> productPage = getAllProducts(pageable);
+        return productPage.map(this::convertToDto);  // Product를 ProductDto로 변환
     }
 
 
     // 페이징 + 검색 적용
+//    public PageResponseDto<ProductDto> getList(PageRequestDto pageRequestDto) {
+//        Pageable pageable = pageRequestDto.getPageable(Sort.by("id").descending());
+//
+//        BooleanBuilder booleanBuilder = getSearch(pageRequestDto);
+//
+//        Page<Product> result = productRepository.findAll(booleanBuilder, pageable);
+//        Page<ProductDto> dtoPage = result.map(this::convertToDto);
+//        return new PageResponseDto<>(dtoPage);
+//    }
+//
+//    private BooleanBuilder getSearch(PageRequestDto pageRequestDto) {
+//        String type = pageRequestDto.getType();
+//        BooleanBuilder booleanBuilder = new BooleanBuilder();
+//        QProduct qProduct = QProduct.product;
+//        String keyword = pageRequestDto.getKeyword();
+//        BooleanExpression expression = qProduct.id.gt(0L);  // id > 0 조건만
+//        booleanBuilder.and(expression);
+//
+//        if (type == null || type.isEmpty()) {
+//            return booleanBuilder;
+//        }
+//
+//        BooleanBuilder conditionBuilder = new BooleanBuilder();
+//
+//        if(type.contains("t")){
+//            conditionBuilder.or(qProduct.name.contains(keyword));
+//        }
+//        if(type.contains("c")){
+//            conditionBuilder.or(qProduct.description.contains(keyword));
+//        }
+//        if(type.contains("w")){
+//            conditionBuilder.or(qProduct.brand.contains(keyword));
+//        }
+//
+//        booleanBuilder.and(conditionBuilder);
+//        return booleanBuilder;
+//    }
+
+    // 페이징 + 검색 적용
     public PageResponseDto<ProductDto> getList(PageRequestDto pageRequestDto) {
-        Pageable pageable = pageRequestDto.getPageable(Sort.by("id").descending());
-
-        BooleanBuilder booleanBuilder = getSearch(pageRequestDto);
-
-        Page<Product> result = productRepository.findAll(booleanBuilder, pageable);
+        Page<Product> result = productRepository.searchProducts(pageRequestDto);
         Page<ProductDto> dtoPage = result.map(this::convertToDto);
         return new PageResponseDto<>(dtoPage);
-    }
-
-    private BooleanBuilder getSearch(PageRequestDto pageRequestDto) {
-        String type = pageRequestDto.getType();
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
-        QProduct qProduct = QProduct.product;
-        String keyword = pageRequestDto.getKeyword();
-        BooleanExpression expression = qProduct.id.gt(0L);  // id > 0 조건만
-        booleanBuilder.and(expression);
-
-        if (type == null || type.isEmpty()) {
-            return booleanBuilder;
-        }
-
-        BooleanBuilder conditionBuilder = new BooleanBuilder();
-
-        if(type.contains("t")){
-            conditionBuilder.or(qProduct.name.contains(keyword));
-        }
-        if(type.contains("c")){
-            conditionBuilder.or(qProduct.description.contains(keyword));
-        }
-        if(type.contains("w")){
-            conditionBuilder.or(qProduct.brand.contains(keyword));
-        }
-
-        booleanBuilder.and(conditionBuilder);
-        return booleanBuilder;
     }
 
 
@@ -163,12 +170,7 @@ public class ProductService {
 
 
     public ProductDto convertToDto(Product product) {
-        ProductDto productDto = modelMapper.map(product, ProductDto.class);
-        List<Image> images = imageRepository.findByProductId(product.getId());
-        List<ImageDto> imageDtos = images.stream()
-                .map(image -> modelMapper.map(image, ImageDto.class))
-                .toList();
-        productDto.setImages(imageDtos);
+        ProductDto productDto = ProductDto.fromProduct(product);
         return productDto;
     }
 
