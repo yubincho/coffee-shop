@@ -3,6 +3,7 @@ package com.example.coffeeOrderService.controller;
 import com.example.coffeeOrderService.common.auth.jwt.JwtProvider;
 import com.example.coffeeOrderService.common.auth.refreshToken.RefreshTokenRepository;
 import com.example.coffeeOrderService.common.auth.refreshToken.RefreshTokenRequest;
+import com.example.coffeeOrderService.common.exception.AlreadyExistsException;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.common.auth.service.AuthService;
 
@@ -39,8 +40,12 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> register(@RequestBody AddUserRequest userRequest) {
-        authService.signUp(userRequest);
-        return ResponseEntity.ok().body(new ApiResponse("Registered Successfully!", null));
+        try {
+            authService.signUp(userRequest);
+            return ResponseEntity.ok().body(new ApiResponse("Registered Successfully!", null));
+        } catch (AlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage(), null));
+        }
     }
 
 

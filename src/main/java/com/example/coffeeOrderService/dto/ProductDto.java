@@ -25,6 +25,7 @@ public class ProductDto {
     private String brand;
     private BigDecimal price;
     private int inventory;
+    private String productStatus;
     private String description;
     private Category category;
     private List<ImageDto> images;
@@ -37,6 +38,7 @@ public class ProductDto {
                 .brand(product.getBrand())
                 .price(product.getPrice())
                 .inventory(product.getInventory())
+                .productStatus(String.valueOf(product.getStatus()))
                 .description(product.getDescription())
                 .category(product.getCategory()) // Category 변환
                 .images(product.getImages() != null && !product.getImages().isEmpty() ?

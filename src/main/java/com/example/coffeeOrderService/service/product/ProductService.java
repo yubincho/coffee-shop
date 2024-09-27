@@ -12,6 +12,7 @@ import com.example.coffeeOrderService.model.image.Image;
 import com.example.coffeeOrderService.model.image.ImageRepository;
 import com.example.coffeeOrderService.model.product.Product;
 import com.example.coffeeOrderService.model.product.ProductRepository;
+import com.example.coffeeOrderService.model.product.ProductStatus;
 import com.example.coffeeOrderService.model.product.QProduct;
 import com.example.coffeeOrderService.request.AddProductRequest;
 
@@ -94,13 +95,16 @@ public class ProductService {
     }
 
 
+    //  논리 삭제
     public void deleteProduct(long id) {
         Product oldProduct = getProductById(id);
-        if (oldProduct != null) {
-            productRepository.delete(oldProduct);
-        } else {
-            throw new ResourceNotFoundException("Product not found!");
-        }
+//        if (oldProduct != null && !oldProduct.getOrderItem().isEmpty()) {
+//            productRepository.delete(oldProduct);
+//        } else {
+//            throw new ResourceNotFoundException("Product not found!");
+//        }
+        oldProduct.delete();
+        productRepository.save(oldProduct);
     }
 
 

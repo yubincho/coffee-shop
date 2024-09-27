@@ -1,6 +1,7 @@
 package com.example.coffeeOrderService.request;
 
 import com.example.coffeeOrderService.model.category.Category;
+import com.example.coffeeOrderService.model.product.ProductStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -16,9 +17,8 @@ public class UpdateProductRequest {
     private int inventory;
     private String description;
 
+    private ProductStatus status;
+
     private Category category;
-
-
-
 
 }

@@ -29,7 +29,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
         Pageable pageable = pageRequestDto.getPageable(Sort.by("id").descending());
 
-        BooleanExpression searchCondition = getSearchCondition(qProduct, pageRequestDto);
+        BooleanExpression searchCondition = getSearchCondition(qProduct, pageRequestDto)
+                .and(qProduct.deleted.isFalse()); // 논리 삭제되지 않은 상품만 조회
 
         List<Product> products = queryFactory
                 .selectFrom(qProduct)

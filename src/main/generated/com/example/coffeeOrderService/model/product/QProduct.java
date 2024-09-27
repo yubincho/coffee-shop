@@ -26,6 +26,8 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final com.example.coffeeOrderService.model.category.QCategory category;
 
+    public final BooleanPath deleted = createBoolean("deleted");
+
     public final StringPath description = createString("description");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
@@ -36,7 +38,11 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final StringPath name = createString("name");
 
+    public final ListPath<com.example.coffeeOrderService.model.orderItem.OrderItem, com.example.coffeeOrderService.model.orderItem.QOrderItem> orderItem = this.<com.example.coffeeOrderService.model.orderItem.OrderItem, com.example.coffeeOrderService.model.orderItem.QOrderItem>createList("orderItem", com.example.coffeeOrderService.model.orderItem.OrderItem.class, com.example.coffeeOrderService.model.orderItem.QOrderItem.class, PathInits.DIRECT2);
+
     public final NumberPath<java.math.BigDecimal> price = createNumber("price", java.math.BigDecimal.class);
+
+    public final EnumPath<ProductStatus> status = createEnum("status", ProductStatus.class);
 
     public QProduct(String variable) {
         this(Product.class, forVariable(variable), INITS);

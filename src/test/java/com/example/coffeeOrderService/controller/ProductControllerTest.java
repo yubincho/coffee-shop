@@ -51,8 +51,8 @@ class ProductControllerTest {
     @BeforeEach
     void setUp() {
         productDtos = Arrays.asList(
-                new ProductDto(1L, "Product 1", "Samsung", new BigDecimal("100.00"), 50, "Description 1", null, null),
-                new ProductDto(2L, "Product 2", "Apple", new BigDecimal("200.00"), 30, "Description 2", null, null)
+                new ProductDto(1L, "Product 1", "Samsung", new BigDecimal("100.00"), 50, "AVAILABLE", "Description 1", null, null),
+                new ProductDto(2L, "Product 2", "Apple", new BigDecimal("200.00"), 30, "AVAILABLE","Description 2", null, null)
         );
     }
 
