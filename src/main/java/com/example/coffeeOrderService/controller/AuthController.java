@@ -100,7 +100,6 @@ public class AuthController {
     public ResponseEntity<ApiResponse> refreshAccessToken(@RequestBody RefreshTokenRequest request) {
         try {
             String newAccessToken = jwtProvider.refreshAccessToken(request.getRefreshToken());
-
             return ResponseEntity.ok(new ApiResponse("Token refreshed successfully", newAccessToken));
         } catch (JwtException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

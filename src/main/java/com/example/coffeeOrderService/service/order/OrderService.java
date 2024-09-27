@@ -110,7 +110,9 @@ public class OrderService {
 
 
     public OrderDto convertToDto(Order order) {
-        return modelMapper.map(order, OrderDto.class);
+        OrderDto orderDto = OrderDto.toDto(order);
+        return orderDto;
+//        return modelMapper.map(order, OrderDto.class);
     }
 
 }

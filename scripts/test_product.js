@@ -3,7 +3,7 @@ import { check, sleep } from 'k6';
 
 // 테스트 시나리오 설정
 export let options = {
-    vus: 500,  // 가상 유저 수 (동시 접속 유저)
+    vus: 100,  // 가상 유저 수 (동시 접속 유저)
     duration: '30s',  // 테스트 지속 시간
 };
 

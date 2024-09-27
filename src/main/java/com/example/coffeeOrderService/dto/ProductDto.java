@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,9 +39,11 @@ public class ProductDto {
                 .inventory(product.getInventory())
                 .description(product.getDescription())
                 .category(product.getCategory()) // Category 변환
-                .images(product.getImages().stream()
-                        .map(ImageDto::fromImage)
-                        .collect(Collectors.toList()))
+                .images(product.getImages() != null && !product.getImages().isEmpty() ?
+                        product.getImages().stream()
+                                .map(ImageDto::fromImage)
+                                .toList()
+                : new ArrayList<>())
                 .build();
     }
 }
