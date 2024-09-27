@@ -7,8 +7,7 @@ import jakarta.persistence.EntityManager;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -27,17 +26,25 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
         QProduct qProduct = QProduct.product;
 
-        Pageable pageable = pageRequestDto.getPageable(Sort.by("id").descending());
+        Long cursor = pageRequestDto.getCursor();  // 커서 값 (마지막 조회된 Product의 ID)
+        int pageSize = (pageRequestDto.getSize() != null) ? pageRequestDto.getSize() : 10; // 페이지 크기
 
         BooleanExpression searchCondition = getSearchCondition(qProduct, pageRequestDto)
                 .and(qProduct.deleted.isFalse()); // 논리 삭제되지 않은 상품만 조회
 
+        // 커서가 있으면 커서보다 큰 ID의 제품만 조회
+        if (cursor != null) {
+            searchCondition = searchCondition.and(qProduct.id.gt(cursor));
+        }
+
+        // 커서를 기반으로 다음 페이지 데이터를 조회
         List<Product> products = queryFactory
                 .selectFrom(qProduct)
                 .where(searchCondition)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .orderBy(qProduct.id.asc())  // 커서 페이징은 보통 ID 기준으로 정렬
+                .limit(pageSize)             // 페이지 크기 만큼 제한
                 .fetch();
+
 
         // 총 개수 가져오기
         long totalCount = queryFactory
@@ -47,7 +54,10 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 .fetch()
                 .size();
 
-        return new PageImpl<>(products, pageable, totalCount);
+        // PageImpl을 사용해 List<Product>를 Page<Product>로 변환
+        // 커서 기반 페이징이므로 PageRequest에서 오프셋은 0으로 고정, 페이지 크기만 설정
+        // 커서 기반 페이징에서는 페이지 번호 자체는 필요 으므로 이렇게 처리함
+        return new PageImpl<>(products, PageRequest.of(0, pageSize), totalCount);
     }
 
     // 동적 검색 조건 생성 메서드

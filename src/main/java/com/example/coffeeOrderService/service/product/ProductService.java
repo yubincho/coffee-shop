@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -36,8 +37,6 @@ public class ProductService {
 
     public final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
-    private final ImageRepository imageRepository;
-    private final ModelMapper modelMapper;
 
 
     public Product addProduct(AddProductRequest request) {
@@ -119,58 +118,18 @@ public class ProductService {
 
 
     // 페이징 + 검색 적용
-//    public PageResponseDto<ProductDto> getList(PageRequestDto pageRequestDto) {
-//        Pageable pageable = pageRequestDto.getPageable(Sort.by("id").descending());
-//
-//        BooleanBuilder booleanBuilder = getSearch(pageRequestDto);
-//
-//        Page<Product> result = productRepository.findAll(booleanBuilder, pageable);
-//        Page<ProductDto> dtoPage = result.map(this::convertToDto);
-//        return new PageResponseDto<>(dtoPage);
-//    }
-//
-//    private BooleanBuilder getSearch(PageRequestDto pageRequestDto) {
-//        String type = pageRequestDto.getType();
-//        BooleanBuilder booleanBuilder = new BooleanBuilder();
-//        QProduct qProduct = QProduct.product;
-//        String keyword = pageRequestDto.getKeyword();
-//        BooleanExpression expression = qProduct.id.gt(0L);  // id > 0 조건만
-//        booleanBuilder.and(expression);
-//
-//        if (type == null || type.isEmpty()) {
-//            return booleanBuilder;
-//        }
-//
-//        BooleanBuilder conditionBuilder = new BooleanBuilder();
-//
-//        if(type.contains("t")){
-//            conditionBuilder.or(qProduct.name.contains(keyword));
-//        }
-//        if(type.contains("c")){
-//            conditionBuilder.or(qProduct.description.contains(keyword));
-//        }
-//        if(type.contains("w")){
-//            conditionBuilder.or(qProduct.brand.contains(keyword));
-//        }
-//
-//        booleanBuilder.and(conditionBuilder);
-//        return booleanBuilder;
-//    }
-
-    // 페이징 + 검색 적용
     public PageResponseDto<ProductDto> getList(PageRequestDto pageRequestDto) {
+        // ProductRepository에서 커서 기반 페이징 결과를 받음
         Page<Product> result = productRepository.searchProducts(pageRequestDto);
-        Page<ProductDto> dtoPage = result.map(this::convertToDto);
-        return new PageResponseDto<>(dtoPage);
+
+        // Product를 ProductDto로 변환
+        List<ProductDto> dtoList = result.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+
+        // PageResponseDto로 반환, dtoList를 이용해 nextCursor 계산
+        return new PageResponseDto<>(dtoList);
     }
-
-
-//    public List<ProductDto> getAllProductDtos() {
-//        List<Product> products = getAllProducts();  // 실제 Product 목록 가져오기
-//        return products.stream()
-//                .map(this::convertToDto)  // Product를 ProductDto로 변환하는 메서드
-//                .collect(Collectors.toList());
-//    }
 
 
     public ProductDto convertToDto(Product product) {
