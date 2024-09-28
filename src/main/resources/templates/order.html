@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 페이지</title>
+
+    <!--    axios-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</head>
+<body>
+<h1>주문 페이지</h1>
+
+<form id="orderForm">
+    <input type="hidden" name="userId" value="1">
+    <input type="button" value="주문하기" onclick="submitOrder()">
+</form>
+
+<script>
+    function submitOrder() {
+        // const userId = document.querySelector('input[name="userId"]').value;
+
+        // userId 값 확인 및 Long 타입으로 변환
+        const userId = parseInt(document.querySelector('input[name="userId"]').value, 10);
+
+        // userId가 올바르게 변환되었는지 확인
+        if (!userId || isNaN(userId)) {
+            alert("유효한 User ID가 필요합니다.");
+            return;
+        }
+
+        axios.post('http://localhost:8080/api/v1/orders/user/place-order', null, {
+            params: {
+                userId: userId  // 서버에 전달할 파라미터
+            }
+        })
+            .then(function (response) {
+                // 성공 메시지 보여주기
+                alert('주문이 성공적으로 완료되었습니다.');
+                // 주문 성공 시 최종 주문 정보 입력 페이지로 이동
+                console.log("response.data :" , response.data.data.id)
+                const orderId = response.data.data.id;  // 서버 응답에서 orderId 받기
+                if (orderId) {
+                    // 성공적으로 주문이 완료되면 완료 페이지로 이동
+                    window.location.href = `http://localhost:8080/api/v1/orders/done?orderId=${orderId}`;
+                } else {
+                    console.error('Order ID가 응답에 포함되지 않았습니다.');
+                }
+            })
+            .catch(function (error) {
+                console.error('주문 중 오류 발생:', error);
+                console.log(error.message)
+                alert('주문에 실패했습니다.');
+                // 실패 시 이동할 페이지 또는 실패 처리
+                window.location.href = '/order/fail';
+            });
+    }
+</script>
+</body>
+</html>

@@ -2,10 +2,15 @@ package com.example.coffeeOrderService.controller;
 
 import com.example.coffeeOrderService.dto.OrderDto;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
+import com.example.coffeeOrderService.model.cart.Cart;
 import com.example.coffeeOrderService.model.order.Order;
+
+import com.example.coffeeOrderService.request.payment.RequestOrder;
 import com.example.coffeeOrderService.response.ApiResponse;
+import com.example.coffeeOrderService.service.cart.CartService;
 import com.example.coffeeOrderService.service.order.OrderService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,14 +29,18 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class OrderController {
 
     private final OrderService orderService;
+    private final CartService cartService;
+    private final HttpSession httpSession;
 
 
     @PostMapping("/user/place-order")
     public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId) {
-        log.info("Placing order for user: {}", userId);
+                                         // @RequestParam Long userId
+//        Long userId = 1L;  //
         try {
-            Order order = orderService.placeOrder(userId);
-            OrderDto orderDto = orderService.convertToDto(order);
+            Order temporaryOrder  = orderService.placeOrder(userId);
+            OrderDto orderDto = orderService.convertToDto(temporaryOrder);
+
             log.debug("Order placed successfully for user: {}", userId);
             return ResponseEntity.ok().body(new ApiResponse("Order Success!", orderDto));
         } catch (Exception e) {
@@ -41,6 +50,25 @@ public class OrderController {
         }
     }
 
+
+    /**
+     * 주문서에서 입력받아 최종 주문 테이블 생성
+     * @param
+     * @return
+     */
+    @PostMapping("/done")
+    public ResponseEntity<Object> completeOrder(@RequestBody RequestOrder requestOrder) {
+        Order completedOrder = orderService.completeOrder(requestOrder);
+
+        // 주문 완료 후 DTO로 변환하여 응답
+        OrderDto orderDto = orderService.convertToDto(completedOrder);
+
+        return ResponseEntity.ok(orderDto);
+    }
+
+
+
+    /** ************************************************************************************* */
 
     @GetMapping("/{orderId}/order")
     public ResponseEntity<ApiResponse> getOrder(@PathVariable Long orderId) {

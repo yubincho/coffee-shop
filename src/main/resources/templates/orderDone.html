@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>최종 주문 정보 입력</title>
+  <!-- Axios 라이브러리 -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<h1>최종 주문 정보 입력</h1>
+<!-- 최종 주문 정보를 입력하는 폼 -->
+<form id="orderForm" method="post">
+  <input type="hidden" id="orderId" name="orderId" th:value="${orderDto.getId()}" value="[[${orderId}]]">
+  <div>
+    <label for="address">주소:</label>
+    <input type="text" id="address" name="address" placeholder="주소 입력">
+  </div>
+  <div>
+    <label for="username">사용자 이름:</label>
+    <input type="text" id="username" name="username" placeholder="사용자 이름">
+  </div>
+  <div>
+    <label for="username">결제수단:</label>
+    <input type="text" id="payMethod" name="payMethod" placeholder="결제수단">
+  </div>
+  <input type="button" value="주문 완료" onclick="completeOrder()">
+</form>
+
+<!-- 주문 완료 후 결제 페이지로 이동하는 자바스크립트 -->
+<script>
+  const orderId = document.getElementById('orderId').value;
+  console.log("orderId : " , orderId)
+
+  function completeOrder() {
+    const orderId = document.getElementById('orderId').value;
+    const address = document.getElementById('address').value;
+    const username = document.getElementById('username').value;
+    const payMethod = document.getElementById('payMethod').value;
+
+    axios.post('http://localhost:8080/api/v1/orders/done', {
+      orderId: orderId,
+      address: address,
+      username: username,
+      payMethod: payMethod
+    }).then(response => {
+      // 주문 완료 후 결제 페이지로 이동
+      window.location.href = `http://localhost:8080/api/v1/payments/order?orderId=${orderId}`;
+    }).catch(error => {
+      alert('주문 완료 중 오류 발생: ' + error.message);
+    });
+  }
+</script>
+</body>
+</html>

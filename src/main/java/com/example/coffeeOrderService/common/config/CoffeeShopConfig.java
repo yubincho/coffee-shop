@@ -10,6 +10,7 @@ import com.example.coffeeOrderService.common.auth.user.UserDetailService;
 import com.example.coffeeOrderService.model.user.RoleRepository;
 import com.example.coffeeOrderService.service.user.UserService;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +32,16 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 
 @RequiredArgsConstructor
@@ -63,7 +70,15 @@ public class CoffeeShopConfig {
 
     private static final List<String> SECURED_URLS =
 //            List.of("/api/v1/carts/**", "/api/v1/cartItems/**", "/api/v1/login", "/api/v1/user");
-            List.of("/api/v1/cart/**");
+            List.of("/api/cart/**");
+
+//    String apiKey = "";
+//    String secretKey = "";
+//
+//    @Bean
+//    public IamportClient iamportClient() {
+//        return new IamportClient(apiKey, secretKey);
+//    }
 
     @Bean
     public JPAQueryFactory jpaQueryFactory() {
@@ -86,8 +101,11 @@ public class CoffeeShopConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
-                .requestMatchers(toH2Console())
-                .requestMatchers(new AntPathRequestMatcher("/static/**"));
+                .requestMatchers(toH2Console()) // H2 콘솔 무시
+                .requestMatchers(new AntPathRequestMatcher("/static/**")) // static 폴더 무시
+                .requestMatchers(new AntPathRequestMatcher("/templates/**"))
+                .requestMatchers(new AntPathRequestMatcher("/resources/**")) // resources 폴더도 포함 가능
+                .requestMatchers(new AntPathRequestMatcher("/webjars/**"));  // Webjars 리소스 무시
     }
 
     @Bean
@@ -115,6 +133,7 @@ public class CoffeeShopConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         return http.csrf(AbstractHttpConfigurer::disable) // 배포시 활성화 필요
+                .cors(withDefaults())  // CORS 필터 추가
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
@@ -148,7 +167,31 @@ public class CoffeeShopConfig {
         return new ProviderManager(authProvider);
     }
 
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/**") // API 경로에 대해 CORS 허용
+                        .allowedOrigins("http://localhost:63342") // 허용할 도메인
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
+                        .allowedHeaders("*") // 허용할 헤더
+                        .allowCredentials(true); // 쿠키 허용
+            }
+        };
+    }
 
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:63342"); // 허용할 도메인
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/api/**", config); // API 경로에 대해 CORS 적용
+        return new CorsFilter(source);
+    }
 
 
 }
