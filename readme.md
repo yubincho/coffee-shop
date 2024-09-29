@@ -26,6 +26,9 @@
 - Google OAuth2 로그인
 - 커피 주문 및 결제
 - 상품 관리 (CRUD 작업)
+- ERD
+![쇼핑몰ERD](https://github.com/user-attachments/assets/9fc16349-6f87-418d-b82c-03d3c4b98c63)
+
 
 ## 기술 스택
 
@@ -45,7 +48,7 @@
 
 ## 설치 및 실행 방법
 
-[프로젝트 설치 및 실행 방법에 대한 설명]
+- java : 17, intelliJ, Spring Boot : 3.2.10
 
 ## 문제 해결 기록
 
