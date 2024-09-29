@@ -1,4 +1,5 @@
-# Coffee Order Service
+# Coffee Order Service ![image](https://github.com/user-attachments/assets/573dddcd-4c75-44ef-a24f-f877c301c2cc)
+
 
 커피 주문 서비스 프로젝트입니다.
 
