@@ -50,23 +50,6 @@ public class PaymentHistory {
     private Product product;
 
 
-    public PaymentHistory(String paymentUid, BigDecimal totalPrice,
-                          LocalDate paidAt, Boolean paymentStatus,
-                          User user, Order order, Product product) {
-        this.paymentUid = paymentUid;
-        this.totalPrice = totalPrice;
-        this.paidAt = paidAt;
-        this.paymentStatus = paymentStatus;
-        this.user = user;
-        this.order = order;
-        this.product = product;
-    }
-
-    public PaymentHistory(User user, Order order,
-                          Product product, BigDecimal totalPrice,
-                          LocalDate now, boolean b) {
-    }
-
     public PaymentHistory(User user, Order order,
                           Product product, String paymentUid,
                           BigDecimal totalPrice, LocalDate paidAt, boolean paymentStatus) {

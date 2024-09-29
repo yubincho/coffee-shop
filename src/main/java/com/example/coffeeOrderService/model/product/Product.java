@@ -12,8 +12,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 
+@EqualsAndHashCode
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

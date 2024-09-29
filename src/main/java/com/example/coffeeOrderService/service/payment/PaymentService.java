@@ -43,10 +43,10 @@ public class PaymentService {
 
         User user = userService.findByEmail(request.getUserEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-//        Optional<User> currentUser = authService.getAuthenticatedUser();
-//        if (!user.equals(currentUser)) {
-//            throw new IllegalStateException("로그인 사용자와 주문자가 서로 다릅니다.");
-//        }
+        Optional<User> currentUser = authService.getAuthenticatedUser(); // test 시 주석처리
+        if (!user.equals(currentUser)) {
+            throw new IllegalStateException("로그인 사용자와 주문자가 서로 다릅니다.");
+        }
 
         // 결제된 금액 확인
         BigDecimal totalPrice = request.getPaymentPrice();
