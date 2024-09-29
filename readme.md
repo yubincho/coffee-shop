@@ -28,6 +28,47 @@
 - 상품 관리 (CRUD 작업)
 - ERD
 ![쇼핑몰ERD](https://github.com/user-attachments/assets/9fc16349-6f87-418d-b82c-03d3c4b98c63)
+- Api Endpoints
+HTTP Method	Endpoint	Description
+POST	${api.prefix}/users/signup	새 사용자 등록
+POST	${api.prefix}/users/logout	사용자 로그아웃 (이메일 가입 사용자)
+POST	${api.prefix}/users/oauth-logout	OAuth 사용자 로그아웃
+POST	${api.prefix}/users/login	사용자 로그인 (이메일 가입 사용자)
+POST	${api.prefix}/users/refresh-token	새로운 액세스 토큰 발급
+		
+GET	${api.prefix}/carts/user/{userId}/my-cart	사용자의 장바구니 조회
+GET	${api.prefix}/carts/{cartId}/cart/total-price	장바구니 총 금액 조회
+DELETE	${api.prefix}/carts/{cartId}/clear	장바구니 비우기
+POST	${api.prefix}/cartItems/item/add	장바구니에 상품 추가
+POST	${api.prefix}/cartItems/cart/{cartId}/item/{itemId}/update	장바구니 상품 수정
+DELETE	${api.prefix}/cartItems/{cartId}/item/{itemId}/remove	장바구니에서 상품 제거
+		
+POST	${api.prefix}/categories/add	새 카테고리 추가
+GET	${api.prefix}/categories	모든 카테고리 조회
+POST	${api.prefix}/categories/category/{id}/category	카테고리 수정
+DELETE	${api.prefix}/categories/category/{id}/category	카테고리 삭제
+		
+POST	${api.prefix}/images/upload	이미지 업로드
+GET	${api.prefix}/images/image/download/{imageId}	이미지 다운로드
+PUT	${api.prefix}/images/image/{imageId}/update	이미지 수정
+DELETE	${api.prefix}/images/image/{imageId}/delete	이미지 삭제
+		
+POST	${api.prefix}/orders/user/place-order	주문 생성
+POST	${api.prefix}/orders/done	주문 완료
+GET	${api.prefix}/orders/{orderId}/order	특정 주문 조회
+GET	${api.prefix}/orders/user/{userId}/order	사용자의 모든 주문 조회
+		
+		
+GET	${api.prefix}/products/all	모든 상품 조회 (페이징)
+POST	${api.prefix}/products/product/{id}/product	특정 상품 조회
+POST	${api.prefix}/products/add	새 상품 추가
+DELETE	${api.prefix}/products/product/{id}/update	상품 정보 수정
+POST	${api.prefix}/products/product/{id}/delete	상품 삭제
+		
+GET	/api/v1/orders/done	주문 완료 페이지 표시
+GET	/api/v1/payments/order	결제 페이지 표시
+POST	${api.prefix}/payments/order/payment/{imp_uid}	결제 처리
+![image](https://github.com/user-attachments/assets/8c577ae5-0377-494a-a278-565c92a8e454)
 
 
 ## 기술 스택
