@@ -1,6 +1,8 @@
 package com.example.coffeeOrderService.model.product;
 
 import com.example.coffeeOrderService.common.pageHandler.PageRequestDto;
+import com.example.coffeeOrderService.dto.PriceRangeDto;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -85,6 +88,54 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         return expression;
     }
 
+
+    @Override
+    public List<Product> findSimilarProducts(Long categoryId, BigDecimal minPrice,
+                                             BigDecimal maxPrice, Long productId) {
+        QProduct qProduct = QProduct.product;
+
+        return queryFactory
+                .selectFrom(qProduct)
+                .where(
+                        qProduct.category.id.eq(categoryId)
+                                .and(qProduct.brand.eq(qProduct.brand))
+                                .and(qProduct.price.between(minPrice, maxPrice))
+                                .and(qProduct.id.ne(productId))  // 자기 자신은 제외
+                )
+                .fetch();
+    }
+
+    @Override
+    public PriceRangeDto findMinPriceAndMaxPrice(Long productId) {
+        QProduct product = QProduct.product;
+
+        // productId로 해당 제품을 조회하여 카테고리와 브랜드를 가져옴
+        Product targetProduct = queryFactory
+                .selectFrom(product)
+                .where(product.id.eq(productId))
+                .fetchOne();
+
+        if (targetProduct == null) {
+            return null; // 해당 제품을 찾지 못한 경우 처리
+        }
+
+        Tuple result = (Tuple) queryFactory
+                .select(product.price.min(), product.price.max())
+                .from(product)
+                .where(
+                        product.category.eq(targetProduct.getCategory())
+                                .and(product.brand.eq(targetProduct.getBrand()))
+                                .and(product.id.ne(productId))  // 자기 자신은 제외
+                )
+                .fetchOne();  // 단일 결과를 반환
+
+        if (result != null) {
+            BigDecimal minPrice = result.get(product.price.min());
+            BigDecimal maxPrice = result.get(product.price.max());
+            return new PriceRangeDto(minPrice, maxPrice);
+        }
+        return null; // 결과가 없는 경우 처리
+    }
 
 
 }

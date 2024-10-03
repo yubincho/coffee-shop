@@ -1,17 +1,24 @@
 package com.example.coffeeOrderService.service.cart;
 
+import com.example.coffeeOrderService.common.auth.service.AuthService;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
+import com.example.coffeeOrderService.common.messaging.producer.userActivity.UserActivityProducer;
 import com.example.coffeeOrderService.model.cart.Cart;
 import com.example.coffeeOrderService.model.cart.CartRepository;
 import com.example.coffeeOrderService.model.cartItem.CartItem;
 import com.example.coffeeOrderService.model.cartItem.CartItemRepository;
 import com.example.coffeeOrderService.model.product.Product;
+import com.example.coffeeOrderService.model.user.User;
+import com.example.coffeeOrderService.model.user.userActivity.UserActivity;
 import com.example.coffeeOrderService.service.product.ProductService;
+import com.example.coffeeOrderService.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 
 @RequiredArgsConstructor
@@ -22,10 +29,13 @@ public class CartItemService {
     private final CartService cartService;
     private final CartRepository cartRepository;
     private final ProductService productService;
+    private final UserActivityProducer userActivityProducer;
+    private final UserService userService;
+    private final AuthService authService;
 
 
     @Transactional
-    public void addItemToCart(Long cartId, Long productId, int quantity) {
+    public void addItemToCart(Long userId, Long cartId, Long productId, int quantity) {
         Cart cart = cartService.getCart(cartId);
         Product product = productService.getProductById(productId);
         // 주어진 productId와 동일한 상품을 찾고, 해당 상품이 장바구니에 없으면 새로운 CartItem을 반환
@@ -50,6 +60,12 @@ public class CartItemService {
         cart.addCartItem(cartItem);
         cartItemRepository.save(cartItem);
         cartRepository.save(cart);
+
+        // 사용자 활동 이벤트 생성
+        UserActivity userActivity = new UserActivity(userId, "ADD_TO_CART", productId);
+
+        // Kafka로 사용자 활동 전송
+        userActivityProducer.sendUserActivity(userActivity);
     }
 
 
