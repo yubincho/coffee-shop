@@ -43,6 +43,7 @@
 - Authentication: JWT, OAuth2
 - 결제 서비스: 아임포트 (테스트용)
 - 성능 테스트 : K6, Grafana (업데이트 중)
+- QueryDSL
 - Postman, Swagger
 
 추가 구현중인 기술:
