@@ -1,6 +1,7 @@
 package com.example.coffeeOrderService.common.messaging.producer.userActivity;
 
 import com.example.coffeeOrderService.model.user.userActivity.UserActivity;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,11 @@ public class UserActivityProducer {
     private final KafkaTemplate<String, UserActivity> kafkaTemplate;
 
 
-    @Value("${kafka.topic.user-activity}")
+    @Value("${spring.kafka.topic.user-activity}")
     private String topic;
 
 
-    public UserActivityProducer(KafkaTemplate<String, UserActivity> kafkaTemplate) {
+    public UserActivityProducer(@Qualifier("userActivityKafkaTemplate") KafkaTemplate<String, UserActivity> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 

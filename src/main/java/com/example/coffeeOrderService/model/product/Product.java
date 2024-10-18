@@ -34,6 +34,8 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductStatus status = ProductStatus.AVAILABLE;  // 기본값: 판매중 상품으로 설정
 
+    /** *************************************************/
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
@@ -44,6 +46,8 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<OrderItem> orderItem;
+
+    /** *************************************************/
 
     // 논리 삭제를 위한 플래그
     private boolean deleted = false;

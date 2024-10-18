@@ -101,7 +101,6 @@ public class CoffeeShopConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
-                .requestMatchers(toH2Console()) // H2 콘솔 무시
                 .requestMatchers(new AntPathRequestMatcher("/static/**")) // static 폴더 무시
                 .requestMatchers(new AntPathRequestMatcher("/templates/**"))
                 .requestMatchers(new AntPathRequestMatcher("/resources/**")) // resources 폴더도 포함 가능

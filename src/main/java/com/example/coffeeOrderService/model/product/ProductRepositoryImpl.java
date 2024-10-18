@@ -7,14 +7,17 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 
+@Slf4j
 public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
@@ -93,6 +96,12 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     public List<Product> findSimilarProducts(Long categoryId, BigDecimal minPrice,
                                              BigDecimal maxPrice, Long productId) {
         QProduct qProduct = QProduct.product;
+
+        // minPrice와 maxPrice가 null인지 확인
+        if (minPrice == null || maxPrice == null) {
+            log.error("Price range is null. minPrice: {}, maxPrice: {}", minPrice, maxPrice);
+            return new ArrayList<>();  // 빈 리스트 반환
+        }
 
         return queryFactory
                 .selectFrom(qProduct)
