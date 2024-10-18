@@ -45,12 +45,13 @@
 - 성능 테스트 : K6, Grafana (업데이트 중)
 - QueryDSL
 - Postman, Swagger
+- Docker
+- Kafka
 
 추가 구현중인 기술:
 - 스프링 배치
-- Kafka
 - AWS 클라우드
-- Docker 
+
 
 ## 설치 및 실행 방법
 
