@@ -49,8 +49,7 @@
 - Kafka
 
 추가 구현중인 기술:
-- 스프링 배치
-- AWS 클라우드
+- Elasticsearch, Kibana
 
 
 ## 설치 및 실행 방법
