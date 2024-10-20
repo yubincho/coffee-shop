@@ -48,8 +48,6 @@
 - Docker
 - Kafka
 
-추가 구현중인 기술:
-- Elasticsearch, Kibana
 
 
 ## 설치 및 실행 방법
