@@ -56,35 +56,15 @@
 
 ## 문제 해결 기록
 
-### 순환 참조 오류
+### 순환 참조 오류 방지 위해 임시로 @Lazy 어노테이션을 사용하였으나, Layer 간 의존성 분리를 위해 리팩토링 중 !!!
 
-#### 문제 설명
-`CoffeeShopConfig`, `JwtProvider`, `UserService` 사이의 순환 참조 문제가 발생했습니다.
-
-#### 해결 방법
-1. `@Lazy` 어노테이션 사용
-   ```java
-   @Lazy
-   private final JwtProvider jwtProvider;
-   ```
-
-2. Setter 주입 사용
-   ```java
-   @Autowired
-   public void setUserService(@Lazy UserService userService) {
-       this.userService = userService;
-   }
-   ```
-
-3. 의존성 분리 (프로젝트가 복잡해질 수 있음)
-
-### 트랜잭션 관련 오류
+### 로그인과 로그아웃 구현시 -> 트랜잭션 관련 오류
 
 #### 문제 설명
 JPA 삭제 작업 시 `TransactionRequiredException` 발생
 
-#### 해결 방법
-관련 메서드에 `@Transactional` 어노테이션 추가
+#### 해결 방법 
+로그인과 로그아웃 구현시 DB 데이터 변경이 있으므로, 관련 메서드에 `@Transactional` 어노테이션 추가
 ```java
 @Transactional
 public String login(LoginRequest loginRequest) {
@@ -126,9 +106,8 @@ Product 업데이트 시 새로운 객체가 생성되는 문제 발생
 public Product updateProduct(long id, UpdateProductRequest request) {
     return productRepository.findById(id)
             .map(existingProduct -> {
-                existingProduct.setName(request.getName());
+                existingProduct.changeName(request.getName());
                 // 다른 필드들도 유사하게 설정
-                return productRepository.save(existingProduct);
             })
             .orElseThrow(() -> new ResourceNotFoundException("Product not found!"));
 }
