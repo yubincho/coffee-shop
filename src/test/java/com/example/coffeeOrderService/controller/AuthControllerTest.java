@@ -1,9 +1,7 @@
 package com.example.coffeeOrderService.controller;
 
-import com.example.coffeeOrderService.common.auth.jwt.JwtFactory;
-import com.example.coffeeOrderService.common.auth.refreshToken.RefreshToken;
-import com.example.coffeeOrderService.common.auth.refreshToken.RefreshTokenRepository;
-import com.example.coffeeOrderService.common.auth.service.AuthService;
+import com.example.coffeeOrderService.domain.auth.refreshToken.RefreshToken;
+import com.example.coffeeOrderService.domain.auth.refreshToken.RefreshTokenRepository;
 import com.example.coffeeOrderService.model.user.Role;
 import com.example.coffeeOrderService.model.user.User;
 import com.example.coffeeOrderService.model.user.UserRepository;
@@ -11,14 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -29,14 +25,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.Duration;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest

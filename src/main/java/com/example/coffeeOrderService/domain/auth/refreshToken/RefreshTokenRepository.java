@@ -1,6 +1,5 @@
-package com.example.coffeeOrderService.common.auth.refreshToken;
+package com.example.coffeeOrderService.domain.auth.refreshToken;
 
-import com.example.coffeeOrderService.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

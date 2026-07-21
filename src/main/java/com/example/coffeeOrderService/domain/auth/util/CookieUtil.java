@@ -1,4 +1,4 @@
-package com.example.coffeeOrderService.common.auth.util;
+package com.example.coffeeOrderService.domain.auth.util;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

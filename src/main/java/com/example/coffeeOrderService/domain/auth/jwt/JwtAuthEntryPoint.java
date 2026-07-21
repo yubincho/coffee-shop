@@ -1,4 +1,4 @@
-package com.example.coffeeOrderService.common.auth.jwt;
+package com.example.coffeeOrderService.domain.auth.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

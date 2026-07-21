@@ -1,7 +1,6 @@
-package com.example.coffeeOrderService.common.auth.refreshToken;
+package com.example.coffeeOrderService.domain.auth.refreshToken;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

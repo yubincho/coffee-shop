@@ -1,11 +1,10 @@
-package com.example.coffeeOrderService.controller;
+package com.example.coffeeOrderService.domain.auth.controller;
 
-import com.example.coffeeOrderService.common.auth.jwt.JwtProvider;
-import com.example.coffeeOrderService.common.auth.refreshToken.RefreshTokenRepository;
-import com.example.coffeeOrderService.common.auth.refreshToken.RefreshTokenRequest;
+import com.example.coffeeOrderService.domain.auth.jwt.JwtProvider;
+import com.example.coffeeOrderService.domain.auth.refreshToken.RefreshTokenRequest;
 import com.example.coffeeOrderService.common.exception.AlreadyExistsException;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
-import com.example.coffeeOrderService.common.auth.service.AuthService;
+import com.example.coffeeOrderService.domain.auth.service.AuthService;
 
 import com.example.coffeeOrderService.model.user.User;
 import com.example.coffeeOrderService.request.AddUserRequest;
@@ -15,7 +14,6 @@ import com.example.coffeeOrderService.request.LoginRequest;
 import com.example.coffeeOrderService.response.ApiResponse;
 import com.example.coffeeOrderService.response.JwtResponse;
 
-import com.example.coffeeOrderService.service.user.UserService;
 import io.jsonwebtoken.JwtException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +21,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.AuthenticationException;
 
 import org.springframework.web.bind.annotation.*;

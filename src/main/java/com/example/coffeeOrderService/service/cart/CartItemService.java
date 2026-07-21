@@ -1,6 +1,6 @@
 package com.example.coffeeOrderService.service.cart;
 
-import com.example.coffeeOrderService.common.auth.service.AuthService;
+import com.example.coffeeOrderService.domain.auth.service.AuthService;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.common.messaging.producer.userActivity.UserActivityProducer;
 import com.example.coffeeOrderService.model.cart.Cart;
@@ -8,17 +8,14 @@ import com.example.coffeeOrderService.model.cart.CartRepository;
 import com.example.coffeeOrderService.model.cartItem.CartItem;
 import com.example.coffeeOrderService.model.cartItem.CartItemRepository;
 import com.example.coffeeOrderService.model.product.Product;
-import com.example.coffeeOrderService.model.user.User;
 import com.example.coffeeOrderService.model.user.userActivity.UserActivity;
 import com.example.coffeeOrderService.service.product.ProductService;
 import com.example.coffeeOrderService.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 
 @RequiredArgsConstructor

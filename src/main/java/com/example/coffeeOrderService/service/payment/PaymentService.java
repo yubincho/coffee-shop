@@ -1,10 +1,9 @@
 package com.example.coffeeOrderService.service.payment;
 
-import com.example.coffeeOrderService.common.auth.service.AuthService;
+import com.example.coffeeOrderService.domain.auth.service.AuthService;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.model.order.Order;
 import com.example.coffeeOrderService.model.order.OrderRepository;
-import com.example.coffeeOrderService.model.order.PayMethod;
 import com.example.coffeeOrderService.model.orderItem.OrderItem;
 import com.example.coffeeOrderService.model.payment.PaymentHistory;
 import com.example.coffeeOrderService.model.payment.PaymentHistoryRepository;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 

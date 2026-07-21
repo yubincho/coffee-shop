@@ -1,7 +1,6 @@
-package com.example.coffeeOrderService.common.auth.jwt;
+package com.example.coffeeOrderService.domain.auth.jwt;
 
-import com.example.coffeeOrderService.common.auth.refreshToken.RefreshTokenRepository;
-import com.example.coffeeOrderService.common.auth.service.AuthService;
+import com.example.coffeeOrderService.domain.auth.refreshToken.RefreshTokenRepository;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.model.user.User;
 import com.example.coffeeOrderService.service.user.UserService;
@@ -19,11 +18,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Component;
 
-import com.example.coffeeOrderService.common.auth.refreshToken.RefreshToken;
+import com.example.coffeeOrderService.domain.auth.refreshToken.RefreshToken;
 
 import java.security.Key;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 

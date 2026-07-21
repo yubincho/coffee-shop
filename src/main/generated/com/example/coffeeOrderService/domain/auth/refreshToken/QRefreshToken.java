@@ -1,4 +1,4 @@
-package com.example.coffeeOrderService.common.auth.refreshToken;
+package com.example.coffeeOrderService.domain.auth.refreshToken;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QRefreshToken extends EntityPathBase<RefreshToken> {
 
-    private static final long serialVersionUID = -135947711L;
+    private static final long serialVersionUID = 989975624L;
 
     public static final QRefreshToken refreshToken1 = new QRefreshToken("refreshToken1");
 

@@ -1,8 +1,8 @@
-package com.example.coffeeOrderService.common.auth.service;
+package com.example.coffeeOrderService.domain.auth.service;
 
-import com.example.coffeeOrderService.common.auth.jwt.JwtProvider;
-import com.example.coffeeOrderService.common.auth.refreshToken.RefreshToken;
-import com.example.coffeeOrderService.common.auth.refreshToken.RefreshTokenRepository;
+import com.example.coffeeOrderService.domain.auth.jwt.JwtProvider;
+import com.example.coffeeOrderService.domain.auth.refreshToken.RefreshToken;
+import com.example.coffeeOrderService.domain.auth.refreshToken.RefreshTokenRepository;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.model.user.Role;
 import com.example.coffeeOrderService.request.AddUserRequest;

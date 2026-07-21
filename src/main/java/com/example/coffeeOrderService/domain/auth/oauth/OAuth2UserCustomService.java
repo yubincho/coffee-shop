@@ -1,4 +1,4 @@
-package com.example.coffeeOrderService.common.auth.oauth;
+package com.example.coffeeOrderService.domain.auth.oauth;
 
 import com.example.coffeeOrderService.model.user.Role;
 import com.example.coffeeOrderService.model.user.RoleRepository;

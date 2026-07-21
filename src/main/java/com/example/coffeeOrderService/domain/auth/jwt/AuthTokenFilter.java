@@ -1,12 +1,11 @@
-package com.example.coffeeOrderService.common.auth.jwt;
+package com.example.coffeeOrderService.domain.auth.jwt;
 
-import com.example.coffeeOrderService.common.auth.user.UserDetailService;
+import com.example.coffeeOrderService.domain.auth.user.UserDetailService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

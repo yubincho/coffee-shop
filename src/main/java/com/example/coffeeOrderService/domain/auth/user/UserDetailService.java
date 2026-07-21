@@ -1,4 +1,4 @@
-package com.example.coffeeOrderService.common.auth.user;
+package com.example.coffeeOrderService.domain.auth.user;
 
 import com.example.coffeeOrderService.model.user.UserRepository;
 import lombok.RequiredArgsConstructor;

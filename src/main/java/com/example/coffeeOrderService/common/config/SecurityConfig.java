@@ -1,12 +1,12 @@
 package com.example.coffeeOrderService.common.config;
 
-import com.example.coffeeOrderService.common.auth.jwt.AuthTokenFilter;
-import com.example.coffeeOrderService.common.auth.jwt.JwtProvider;
-import com.example.coffeeOrderService.common.auth.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import com.example.coffeeOrderService.common.auth.oauth.OAuth2SuccessHandler;
-import com.example.coffeeOrderService.common.auth.oauth.OAuth2UserCustomService;
-import com.example.coffeeOrderService.common.auth.refreshToken.RefreshTokenRepository;
-import com.example.coffeeOrderService.common.auth.user.UserDetailService;
+import com.example.coffeeOrderService.domain.auth.jwt.AuthTokenFilter;
+import com.example.coffeeOrderService.domain.auth.jwt.JwtProvider;
+import com.example.coffeeOrderService.domain.auth.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.example.coffeeOrderService.domain.auth.oauth.OAuth2SuccessHandler;
+import com.example.coffeeOrderService.domain.auth.oauth.OAuth2UserCustomService;
+import com.example.coffeeOrderService.domain.auth.refreshToken.RefreshTokenRepository;
+import com.example.coffeeOrderService.domain.auth.user.UserDetailService;
 import com.example.coffeeOrderService.model.user.RoleRepository;
 import com.example.coffeeOrderService.service.user.UserService;
 import lombok.RequiredArgsConstructor;
