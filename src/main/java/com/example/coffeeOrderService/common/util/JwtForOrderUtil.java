@@ -1,9 +1,8 @@
 package com.example.coffeeOrderService.common.util;
 
-import com.example.coffeeOrderService.model.order.Order;
+import com.example.coffeeOrderService.domain.order.entity.Order;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;

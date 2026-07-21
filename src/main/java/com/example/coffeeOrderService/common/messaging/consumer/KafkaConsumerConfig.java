@@ -1,10 +1,8 @@
 package com.example.coffeeOrderService.common.messaging.consumer;
 
 
-import com.example.coffeeOrderService.model.user.userActivity.UserActivity;
+import com.example.coffeeOrderService.domain.userActivity.entity.UserActivity;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +43,7 @@ public class KafkaConsumerConfig {
         // ErrorHandlingDeserializer와 JsonDeserializer를 사용하여 UserActivity 객체 역직렬화
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class.getName());
         config.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class.getName());
-        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "com.example.coffeeOrderService.model.user.userActivity.UserActivity");
+        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "com.example.coffeeOrderService.domain.userActivity.entity.UserActivity");
         config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 
         // 첫 메시지부터 처리하려면 earliest로 설정

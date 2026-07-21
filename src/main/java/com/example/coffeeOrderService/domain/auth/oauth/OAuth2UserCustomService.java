@@ -1,9 +1,9 @@
 package com.example.coffeeOrderService.domain.auth.oauth;
 
-import com.example.coffeeOrderService.model.user.Role;
-import com.example.coffeeOrderService.model.user.RoleRepository;
-import com.example.coffeeOrderService.model.user.User;
-import com.example.coffeeOrderService.model.user.UserRepository;
+import com.example.coffeeOrderService.domain.user.entity.Role;
+import com.example.coffeeOrderService.domain.user.repository.RoleRepository;
+import com.example.coffeeOrderService.domain.user.entity.User;
+import com.example.coffeeOrderService.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;

@@ -1,9 +1,9 @@
 //package com.example.coffeeOrderService.controller;
 //
 //import com.example.coffeeOrderService.common.pageHandler.PageResponseDto;
-//import com.example.coffeeOrderService.dto.ProductDto;
+//import com.example.coffeeOrderService.domain.product.dto.ProductDto;
 //import com.example.coffeeOrderService.model.product.Product;
-//import com.example.coffeeOrderService.service.product.ProductService;
+//import com.example.coffeeOrderService.domain.product.service.ProductService;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.DisplayName;

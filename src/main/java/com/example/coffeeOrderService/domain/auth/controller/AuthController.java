@@ -6,13 +6,13 @@ import com.example.coffeeOrderService.common.exception.AlreadyExistsException;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.domain.auth.service.AuthService;
 
-import com.example.coffeeOrderService.model.user.User;
-import com.example.coffeeOrderService.request.AddUserRequest;
-import com.example.coffeeOrderService.request.LogOutRequest;
-import com.example.coffeeOrderService.request.LoginRequest;
+import com.example.coffeeOrderService.domain.user.entity.User;
+import com.example.coffeeOrderService.domain.auth.dto.AddUserRequest;
+import com.example.coffeeOrderService.domain.auth.dto.LogOutRequest;
+import com.example.coffeeOrderService.domain.auth.dto.LoginRequest;
 
-import com.example.coffeeOrderService.response.ApiResponse;
-import com.example.coffeeOrderService.response.JwtResponse;
+import com.example.coffeeOrderService.common.response.ApiResponse;
+import com.example.coffeeOrderService.common.response.JwtResponse;
 
 import io.jsonwebtoken.JwtException;
 

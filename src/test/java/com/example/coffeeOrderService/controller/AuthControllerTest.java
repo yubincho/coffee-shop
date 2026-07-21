@@ -2,9 +2,9 @@ package com.example.coffeeOrderService.controller;
 
 import com.example.coffeeOrderService.domain.auth.refreshToken.RefreshToken;
 import com.example.coffeeOrderService.domain.auth.refreshToken.RefreshTokenRepository;
-import com.example.coffeeOrderService.model.user.Role;
-import com.example.coffeeOrderService.model.user.User;
-import com.example.coffeeOrderService.model.user.UserRepository;
+import com.example.coffeeOrderService.domain.user.entity.Role;
+import com.example.coffeeOrderService.domain.user.entity.User;
+import com.example.coffeeOrderService.domain.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;

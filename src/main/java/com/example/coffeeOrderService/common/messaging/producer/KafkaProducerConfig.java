@@ -1,7 +1,7 @@
 package com.example.coffeeOrderService.common.messaging.producer;
 
 
-import com.example.coffeeOrderService.model.user.userActivity.UserActivity;
+import com.example.coffeeOrderService.domain.userActivity.entity.UserActivity;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;

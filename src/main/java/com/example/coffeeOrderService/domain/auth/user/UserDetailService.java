@@ -1,6 +1,6 @@
 package com.example.coffeeOrderService.domain.auth.user;
 
-import com.example.coffeeOrderService.model.user.UserRepository;
+import com.example.coffeeOrderService.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

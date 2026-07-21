@@ -1,6 +1,6 @@
 package com.example.coffeeOrderService.common.messaging.producer.userActivity;
 
-import com.example.coffeeOrderService.model.user.userActivity.UserActivity;
+import com.example.coffeeOrderService.domain.userActivity.entity.UserActivity;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;

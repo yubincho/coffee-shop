@@ -2,8 +2,8 @@ package com.example.coffeeOrderService.domain.auth.jwt;
 
 import com.example.coffeeOrderService.domain.auth.refreshToken.RefreshTokenRepository;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
-import com.example.coffeeOrderService.model.user.User;
-import com.example.coffeeOrderService.service.user.UserService;
+import com.example.coffeeOrderService.domain.user.entity.User;
+import com.example.coffeeOrderService.domain.user.service.UserService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

@@ -1,14 +1,13 @@
 package com.example.coffeeOrderService.common.messaging.consumer.userActivity;
 
-import com.example.coffeeOrderService.model.user.userActivity.UserActivity;
-import com.example.coffeeOrderService.model.user.userActivity.UserActivityRepository;
-import com.example.coffeeOrderService.service.userActivity.RecommendationService;
+import com.example.coffeeOrderService.domain.userActivity.entity.UserActivity;
+import com.example.coffeeOrderService.domain.userActivity.repository.UserActivityRepository;
+import com.example.coffeeOrderService.domain.userActivity.service.RecommendationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
