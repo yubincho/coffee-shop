@@ -1,0 +1,125 @@
+spring:
+  application:
+    name: coffeeOrderService
+
+  profiles:
+    active: dev
+
+  # ==================== 공통 설정 ====================
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
+
+  thymeleaf:
+    cache: false
+    check-template-location: true
+
+  devtools:
+    livereload:
+      enabled: true
+
+server:
+  port: 8080
+  compression:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.example.coffeeOrderService: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+
+# ==================== dev profile ====================
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/coffee_shop?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password:                       # 본인 로컬 MySQL 비밀번호
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop         # create-drop, update, none, validate
+
+  # 구글 OAuth2 로그인 (표준 방식)
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id:              # 구글 클라이언트 ID
+            client-secret:          # 구글 클라이언트 시크릿
+            scope:
+              - email
+              - profile
+
+logging:
+  level:
+    com.example.coffeeOrderService: DEBUG
+    org.springframework.security: TRACE
+
+# JWT (코드에서 auth.token.jwtSecret 로 읽음, Base64 인코딩된 값 필요)
+auth:
+  token:
+    jwtSecret:                      # openssl rand -base64 48 로 생성
+
+
+# ==================== prod profile ====================
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/coffee_shop?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  thymeleaf:
+    cache: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+            scope:
+              - email
+              - profile
+
+logging:
+  level:
+    com.example.coffeeOrderService: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: ERROR
+
+auth:
+  token:
+    jwtSecret: ${JWT_SECRET:}

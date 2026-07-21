@@ -80,16 +80,6 @@ public class CoffeeShopConfig {
 //        return new IamportClient(apiKey, secretKey);
 //    }
 
-    @Bean
-    public JPAQueryFactory jpaQueryFactory() {
-        return new JPAQueryFactory(entityManager);
-    }
-
-
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
 
 
     @Bean
@@ -164,32 +154,6 @@ public class CoffeeShopConfig {
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(bCryptPasswordEncoder);
         return new ProviderManager(authProvider);
-    }
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**") // API 경로에 대해 CORS 허용
-                        .allowedOrigins("http://localhost:63342") // 허용할 도메인
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
-                        .allowedHeaders("*") // 허용할 헤더
-                        .allowCredentials(true); // 쿠키 허용
-            }
-        };
-    }
-
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:63342"); // 허용할 도메인
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/api/**", config); // API 경로에 대해 CORS 적용
-        return new CorsFilter(source);
     }
 
 
