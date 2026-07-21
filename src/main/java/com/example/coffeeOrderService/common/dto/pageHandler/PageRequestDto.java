@@ -1,4 +1,4 @@
-package com.example.coffeeOrderService.common.pageHandler;
+package com.example.coffeeOrderService.common.dto.pageHandler;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

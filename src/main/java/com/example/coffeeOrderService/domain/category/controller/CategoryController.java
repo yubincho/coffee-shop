@@ -3,7 +3,7 @@ package com.example.coffeeOrderService.domain.category.controller;
 import com.example.coffeeOrderService.common.exception.AlreadyExistsException;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.domain.category.entity.Category;
-import com.example.coffeeOrderService.common.response.ApiResponse;
+import com.example.coffeeOrderService.common.dto.response.ApiResponse;
 import com.example.coffeeOrderService.domain.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

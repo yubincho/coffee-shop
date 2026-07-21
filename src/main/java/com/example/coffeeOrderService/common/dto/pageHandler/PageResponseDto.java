@@ -1,4 +1,4 @@
-package com.example.coffeeOrderService.common.pageHandler;
+package com.example.coffeeOrderService.common.dto.pageHandler;
 
 import com.example.coffeeOrderService.domain.product.dto.ProductDto;
 import lombok.Data;

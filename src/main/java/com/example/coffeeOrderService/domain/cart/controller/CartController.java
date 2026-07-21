@@ -3,7 +3,7 @@ package com.example.coffeeOrderService.domain.cart.controller;
 import com.example.coffeeOrderService.domain.cart.dto.CartDto;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.domain.cart.entity.Cart;
-import com.example.coffeeOrderService.common.response.ApiResponse;
+import com.example.coffeeOrderService.common.dto.response.ApiResponse;
 import com.example.coffeeOrderService.domain.cart.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

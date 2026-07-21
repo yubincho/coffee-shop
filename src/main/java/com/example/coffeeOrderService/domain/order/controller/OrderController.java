@@ -5,7 +5,7 @@ import com.example.coffeeOrderService.common.exception.ResourceNotFoundException
 import com.example.coffeeOrderService.domain.order.entity.Order;
 
 import com.example.coffeeOrderService.domain.payment.dto.RequestOrder;
-import com.example.coffeeOrderService.common.response.ApiResponse;
+import com.example.coffeeOrderService.common.dto.response.ApiResponse;
 import com.example.coffeeOrderService.domain.cart.service.CartService;
 import com.example.coffeeOrderService.domain.order.service.OrderService;
 

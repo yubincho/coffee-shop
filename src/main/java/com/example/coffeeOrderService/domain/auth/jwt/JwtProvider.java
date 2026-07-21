@@ -3,22 +3,17 @@ package com.example.coffeeOrderService.domain.auth.jwt;
 import com.example.coffeeOrderService.domain.auth.refreshToken.RefreshTokenRepository;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.domain.user.entity.User;
-import com.example.coffeeOrderService.domain.user.service.UserService;
+import com.example.coffeeOrderService.domain.user.repository.UserRepository;
+import com.example.coffeeOrderService.domain.auth.refreshToken.RefreshToken;
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;q
 
-import com.example.coffeeOrderService.domain.auth.refreshToken.RefreshToken;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.time.Duration;
@@ -33,45 +28,16 @@ public class JwtProvider {
     @Value("${auth.token.jwtSecret}")
     private String jwtSecret;
 
-    private UserService userService;
+    private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-
-    // UserService에 Setter 주입 적용
-    @Autowired
-    public void setUserService(@Lazy UserService userService) {
-        this.userService = userService;
-    }
 
     // 토큰 유효기간
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);  // Access Token: 1일
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(7);  // Refresh Token: 7일
 
     // Access Token 생성
-    public String generateAccessTokenForUser(Authentication authentication) {
-        if (authentication.getPrincipal() instanceof DefaultOAuth2User) {
-            // OAuth2User로 변환 시도 (구글 로그인 사용자)
-            DefaultOAuth2User oAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
-            String email = (String) oAuth2User.getAttributes().get("email");
-
-            User userPrincipal = userService.findByEmail(email)
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
-
-            return generateToken(userPrincipal, ACCESS_TOKEN_DURATION);
-        } else if (authentication.getPrincipal() instanceof UserDetails) {
-            // 일반 이메일 사용자
-//            User userPrincipal = (User) authentication.getPrincipal();
-            // 일반 사용자 처리
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String email = userDetails.getUsername();  // UserDetails에서 이메일 가져옴
-
-            // 이메일로 User 엔티티 조회
-            User userPrincipal = userService.findByEmail(email)
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
-
-            return generateToken(userPrincipal, ACCESS_TOKEN_DURATION);
-        }
-
-        throw new IllegalArgumentException("Unsupported authentication principal type");
+    public String generateAccessTokenForUser(User user) {
+        return generateToken(user, ACCESS_TOKEN_DURATION);
     }
 
     // Refresh Token 생성
@@ -109,6 +75,7 @@ public class JwtProvider {
     }
 
     // 리프레시 토큰으로 Access Token 갱신
+    // 재발급 — userService.getUserById → userRepository 조회로 변경
     public String refreshAccessToken(String refreshToken) {
         // Refresh Token 검증
         RefreshToken token = refreshTokenRepository.findByRefreshToken(refreshToken)
@@ -122,13 +89,10 @@ public class JwtProvider {
 
         // Refresh Token의 사용자 정보로 새로운 Access Token 생성
         Long userId = token.getUserId();
-        User user = userService.getUserById(userId);
+        User user = userRepository.findById(userId)  // UserService 대신 Repository
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
-        // 새로운 Access Token 발급
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user.getEmail(), null, user.getAuthorities());
-
-        return generateAccessTokenForUser(authentication);
+        return generateAccessTokenForUser(user);
     }
 
     // JWT에서 유저네임 추출 -> email 추출로 설정함

@@ -3,7 +3,7 @@ package com.example.coffeeOrderService.domain.image.controller;
 import com.example.coffeeOrderService.domain.image.dto.ImageDto;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.domain.image.entity.Image;
-import com.example.coffeeOrderService.common.response.ApiResponse;
+import com.example.coffeeOrderService.common.dto.response.ApiResponse;
 import com.example.coffeeOrderService.domain.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;

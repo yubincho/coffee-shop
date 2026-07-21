@@ -1,7 +1,7 @@
 package com.example.coffeeOrderService.domain.product.service;
 
-import com.example.coffeeOrderService.common.pageHandler.PageRequestDto;
-import com.example.coffeeOrderService.common.pageHandler.PageResponseDto;
+import com.example.coffeeOrderService.common.dto.pageHandler.PageRequestDto;
+import com.example.coffeeOrderService.common.dto.pageHandler.PageResponseDto;
 import com.example.coffeeOrderService.domain.product.dto.ProductDto;
 import com.example.coffeeOrderService.common.exception.AlreadyExistsException;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;

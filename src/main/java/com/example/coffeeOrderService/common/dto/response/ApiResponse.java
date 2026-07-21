@@ -1,4 +1,4 @@
-package com.example.coffeeOrderService.common.response;
+package com.example.coffeeOrderService.common.dto.response;
 
 
 import lombok.AllArgsConstructor;

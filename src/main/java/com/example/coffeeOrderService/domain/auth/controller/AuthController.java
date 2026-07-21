@@ -11,8 +11,8 @@ import com.example.coffeeOrderService.domain.auth.dto.AddUserRequest;
 import com.example.coffeeOrderService.domain.auth.dto.LogOutRequest;
 import com.example.coffeeOrderService.domain.auth.dto.LoginRequest;
 
-import com.example.coffeeOrderService.common.response.ApiResponse;
-import com.example.coffeeOrderService.common.response.JwtResponse;
+import com.example.coffeeOrderService.common.dto.response.ApiResponse;
+import com.example.coffeeOrderService.common.dto.response.JwtResponse;
 
 import io.jsonwebtoken.JwtException;
 

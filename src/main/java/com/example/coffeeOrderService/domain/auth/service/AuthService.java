@@ -35,13 +35,10 @@ import java.util.Set;
 public class AuthService {
 
     private final UserRepository userRepository;
-    @Lazy
-    private final UserService userService;
 
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    @Lazy
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -69,9 +66,10 @@ public class AuthService {
 
 
     // 이메일 가입 사용자 로그아웃
+    // userService → userRepository
     @Transactional  // 트랜잭션을 적용하여 삭제 작업 처리
     public void logout(LogOutRequest logoutRequest) {
-        User user = userService.findByEmail(logoutRequest.getEmail())
+        User user = userRepository.findByEmail(logoutRequest.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         // 해당 사용자의 리프레시 토큰 삭제 (트랜잭션 내에서 처리)
@@ -126,7 +124,7 @@ public class AuthService {
         // SecurityContextHolder에 인증 정보 설정
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String accessToken = jwtProvider.generateAccessTokenForUser(authentication);
+        String accessToken = jwtProvider.generateAccessTokenForUser(user);
         String refreshToken = jwtProvider.generateRefreshTokenForUser(user);
 
         // Refresh Token을 DB에 저장

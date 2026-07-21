@@ -1,6 +1,6 @@
 package com.example.coffeeOrderService.domain.product.repository;
 
-import com.example.coffeeOrderService.common.pageHandler.PageRequestDto;
+import com.example.coffeeOrderService.common.dto.pageHandler.PageRequestDto;
 import com.example.coffeeOrderService.domain.product.entity.Product;
 import com.example.coffeeOrderService.domain.product.entity.QProduct;
 import com.example.coffeeOrderService.domain.product.dto.PriceRangeDto;

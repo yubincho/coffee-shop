@@ -3,7 +3,7 @@ package com.example.coffeeOrderService.domain.cartItem.controller;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.domain.cart.entity.Cart;
 import com.example.coffeeOrderService.domain.user.entity.User;
-import com.example.coffeeOrderService.common.response.ApiResponse;
+import com.example.coffeeOrderService.common.dto.response.ApiResponse;
 import com.example.coffeeOrderService.domain.cartItem.service.CartItemService;
 import com.example.coffeeOrderService.domain.cart.service.CartService;
 import com.example.coffeeOrderService.domain.user.service.UserService;

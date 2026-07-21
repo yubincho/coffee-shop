@@ -1,13 +1,13 @@
 package com.example.coffeeOrderService.domain.product.controller;
 
-import com.example.coffeeOrderService.common.pageHandler.PageRequestDto;
-import com.example.coffeeOrderService.common.pageHandler.PageResponseDto;
+import com.example.coffeeOrderService.common.dto.pageHandler.PageRequestDto;
+import com.example.coffeeOrderService.common.dto.pageHandler.PageResponseDto;
 import com.example.coffeeOrderService.domain.product.dto.ProductDto;
 import com.example.coffeeOrderService.common.exception.AlreadyExistsException;
 import com.example.coffeeOrderService.domain.product.entity.Product;
 import com.example.coffeeOrderService.domain.product.dto.AddProductRequest;
 import com.example.coffeeOrderService.domain.product.dto.UpdateProductRequest;
-import com.example.coffeeOrderService.common.response.ApiResponse;
+import com.example.coffeeOrderService.common.dto.response.ApiResponse;
 import com.example.coffeeOrderService.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
