@@ -1,6 +1,7 @@
 package com.example.coffeeOrderService.domain.product.entity;
 
 
+import com.example.coffeeOrderService.common.exception.OutOfStockException;
 import com.example.coffeeOrderService.domain.category.entity.Category;
 import com.example.coffeeOrderService.domain.image.entity.Image;
 import com.example.coffeeOrderService.domain.orderItem.entity.OrderItem;
@@ -34,6 +35,10 @@ public class Product {
 
     @Enumerated(EnumType.STRING)
     private ProductStatus status = ProductStatus.AVAILABLE;  // 기본값: 판매중 상품으로 설정
+
+    // 낙관적 락
+    @Version
+    private Long version;
 
     /** *************************************************/
 
@@ -79,4 +84,19 @@ public class Product {
         this.inventory = inventory;
         this.description = description;
     }
+
+    // 재고 차감
+    public void removeStock(int quantity) {
+        int restStock = this.inventory - quantity;
+        if (restStock < 0) {
+            throw new OutOfStockException(
+                    "재고가 부족합니다. 현재 재고: " + this.inventory + ", 요청 수량: " + quantity);
+        }
+        this.inventory = restStock;
+    }
+
+    public void addStock(int quantity) {   // 주문 취소 등으로 재고 되돌릴 때
+        this.inventory += quantity;
+    }
+
 }

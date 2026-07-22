@@ -70,25 +70,25 @@ public class OrderService {
 
     // Cart 객체에서 **장바구니 항목(CartItem)**을 가져와, 이를 **주문 항목(OrderItem)**으로 변환
     private List<OrderItem> createOrderItems(Order order, Cart cart) {
-        return cart.getCartItems().stream()   // 일반 스트림 사용
+        return cart.getCartItems().stream()
                 .map(cartItem -> {
-                    // 각 CartItem에서 상품(Product) 정보를 가져옴
-                    Product product = cartItem.getProduct();
-                    // 재고가 충분하지 않을 경우 예외 발생
-//                    if (product.getInventory() < cartItem.getQuantity()) {
-//                        throw new IllegalStateException("재고가 부족합니다.");
-//                    }
-                    // 현재 상품의 재고를 가져와서, 사용자가 구매한 수량만큼 재고에서 차감하고, 그 결과를 데이터베이스에 저장
-                    product.setInventory(product.getInventory() - cartItem.getQuantity()); // ***
-                    productRepository.save(product);
+                    // 비관적 락으로 product를 다시 조회 — 이 순간 DB 행에 쓰기 락이 걸림
+                    Product product = productRepository.findByIdWithPessimisticLock(
+                                    cartItem.getProduct().getId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+                    product.removeStock(cartItem.getQuantity());  // 락 걸린 상태에서 검증+차감
+                    // productRepository.save() 불필요 — @Transactional 더티 체킹으로 자동 반영
+
                     return new OrderItem(
                             order,
-                            product,
+                            product,                          // 락으로 조회한 product를 그대로 사용
                             cartItem.getQuantity(),
                             cartItem.getUnitPrice()
                     );
                 }).toList();
     }
+
 
     /**
      * 주문 최종 확정 및 저장
