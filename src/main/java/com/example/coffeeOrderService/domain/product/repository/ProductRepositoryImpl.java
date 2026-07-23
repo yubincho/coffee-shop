@@ -45,18 +45,31 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
             searchCondition = searchCondition.and(qProduct.id.gt(cursor));
         }
 
-        // 커서를 기반으로 다음 페이지 데이터를 조회
-        List<Product> products = queryFactory
-                .selectFrom(qProduct)
+        // 1단계: 커서 페이징으로 '상품 ID만' 먼저 조회 (limit 정확성 보장)
+        List<Long> productIds = queryFactory
+                .select(qProduct.id)
+                .from(qProduct)
                 .where(searchCondition)
-                .orderBy(qProduct.id.asc())  // 커서 페이징은 보통 ID 기준으로 정렬
-                .limit(pageSize)             // 페이지 크기 만큼 제한
+                .orderBy(qProduct.id.asc())
+                .limit(pageSize)
                 .fetch();
 
+        // 조회된 ID가 없으면 빈 페이지 반환 (뒤 쿼리에서 IN () 에러 방지)
+        if (productIds.isEmpty()) {
+            return new PageImpl<>(new ArrayList<>(), PageRequest.of(0, pageSize), 0);
+        }
 
-        // 총 개수 가져오기
+        // 2단계: 그 ID들로 images를 fetch join 해서 실제 데이터 조회
+        List<Product> products = queryFactory
+                .selectFrom(qProduct)
+                .leftJoin(qProduct.images).fetchJoin()
+                .where(qProduct.id.in(productIds))
+                .orderBy(qProduct.id.asc())
+                .fetch();
+
+        // 총 개수
         long totalCount = queryFactory
-                .select(qProduct.id)  // 총 개수는 id만 세면 충분함
+                .select(qProduct.id)
                 .from(qProduct)
                 .where(searchCondition)
                 .fetch()

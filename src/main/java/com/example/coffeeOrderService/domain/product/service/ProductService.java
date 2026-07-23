@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -109,6 +110,7 @@ public class ProductService {
 
 
     // 페이징 + 검색 적용
+//    @Transactional(readOnly = true)
     public PageResponseDto<ProductDto> getList(PageRequestDto pageRequestDto) {
         // ProductRepository에서 커서 기반 페이징 결과를 받음
         Page<Product> result = productRepository.searchProducts(pageRequestDto);
