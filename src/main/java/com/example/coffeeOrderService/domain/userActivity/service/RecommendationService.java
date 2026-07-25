@@ -42,7 +42,15 @@ public class RecommendationService {
         // 각 장바구니 아이템에 대해 유사한 제품 찾기
         List<Recommendation> recommendations = new ArrayList<>();
         for (UserActivity userActivity : userActivities) {
-            Long categoryId = productService.getProductById(userActivity.getProductId()).getCategory().getId();
+            Product product = productService.getProductById(userActivity.getProductId());
+
+            // 카테고리가 없는 상품은 추천 대상에서 제외
+            if (product.getCategory() == null) {
+                log.warn("Product {} has no category, skipping recommendation", product.getId());
+                continue;
+            }
+
+            Long categoryId = product.getCategory().getId();
             Long productId = userActivity.getProductId();
 
             // min price 와 max price 찾기
@@ -65,14 +73,17 @@ public class RecommendationService {
             // 유사 제품을 추천 목록에 추가 (5개 제한)
             recommendations.addAll(similarProducts.stream()
                     .limit(5)
-                    .map(product -> new Recommendation(userId, product.getId()))
+                    .map(similarProduct -> new Recommendation(userId, similarProduct.getId()))
                     .toList()
                     );
         }
 
         // 추천 데이터를 데이터베이스에 저장
-        recommendationRepository.saveAll(recommendations);
-
+        log.info("Generated {} recommendations for userId: {}", recommendations.size(), userId);
+        if (!recommendations.isEmpty()) {  // 새로 만들 게 없으면 기존 걸 그냥 두고 싶다
+            recommendationRepository.deleteByUserId(userId);   // ← 기존 추천 먼저 삭제, 중복 방지
+            recommendationRepository.saveAll(recommendations);  // 새 추천 저장, 최신 목록 하나만 유지
+        }
         return recommendations;
     }
 

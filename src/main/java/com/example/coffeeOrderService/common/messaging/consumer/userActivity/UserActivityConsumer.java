@@ -41,7 +41,7 @@ public class UserActivityConsumer {
             topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE
     )
     @KafkaListener(topics = "${spring.kafka.topic.user-activity}", groupId = "${spring.kafka.consumer.group-id}", containerFactory = "kafkaListenerContainerFactory")
-    public void consumeUserActivity(UserActivity activity) {
+    public void consumeUserActivity(UserActivity activity) {  // 이 메서드 : "Consumer가 메시지를 실제로 받았고 역직렬화도 성공했다"
         try {
             log.info("Consuming user activity: {}", activity);
 
@@ -49,7 +49,7 @@ public class UserActivityConsumer {
                 throw new IllegalArgumentException("User activity must have a user id");
             }
 
-//        // 수신된 사용자 활동 데이터를 DB에 저장
+        // 수신된 사용자 활동 데이터를 DB에 저장
             userActivityRepository.save(activity);
 
             // 추천 데이터 생성 (유저 ID 기반으로 추천 로직 호출)
