@@ -22,11 +22,22 @@ public class CartController {
     private final CartService cartService;
 
 
+//    @GetMapping("/user/{userId}/my-cart")
+//    public ResponseEntity<ApiResponse> getCart(@PathVariable("userId") Long userId) {
+//        try {
+//            Cart cart = cartService.getCartByUserId(userId);
+//            CartDto cartDto = cartService.convertToDto(cart);
+//            return ResponseEntity.ok().body(new ApiResponse("Success", cartDto));
+//        } catch (ResourceNotFoundException e) {
+//            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+//        }
+//    }
+
+
     @GetMapping("/user/{userId}/my-cart")
     public ResponseEntity<ApiResponse> getCart(@PathVariable("userId") Long userId) {
         try {
-            Cart cart = cartService.getCartByUserId(userId);
-            CartDto cartDto = cartService.convertToDto(cart);
+            CartDto cartDto = cartService.getCartDtoByUserId(userId);
             return ResponseEntity.ok().body(new ApiResponse("Success", cartDto));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));

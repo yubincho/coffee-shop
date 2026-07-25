@@ -77,4 +77,12 @@ public class CartService {
         return CartDto.fromCart(cart);
     }
 
+
+    @Transactional(readOnly = true)
+    public CartDto getCartDtoByUserId(Long userId) {
+        Cart cart = cartRepository.findByUserIdWithItemsAndProducts(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for userId: " + userId));
+        return CartDto.fromCart(cart);   // 트랜잭션 안에서 변환까지 끝냄
+    }
+
 }

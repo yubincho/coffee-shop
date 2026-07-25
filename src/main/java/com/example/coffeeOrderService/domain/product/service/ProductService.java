@@ -110,7 +110,7 @@ public class ProductService {
 
 
     // 페이징 + 검색 적용
-//    @Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public PageResponseDto<ProductDto> getList(PageRequestDto pageRequestDto) {
         // ProductRepository에서 커서 기반 페이징 결과를 받음
         Page<Product> result = productRepository.searchProducts(pageRequestDto);

@@ -27,7 +27,11 @@ public class ProductDto {
     private int inventory;
     private String productStatus;
     private String description;
-    private Category category;
+
+    // 변경: Category 엔티티 대신 필요한 값만 담음
+    private Long categoryId;
+    private String categoryName;
+
     private List<ImageDto> images;
 
 
@@ -40,7 +44,10 @@ public class ProductDto {
                 .inventory(product.getInventory())
                 .productStatus(String.valueOf(product.getStatus()))
                 .description(product.getDescription())
-                .category(product.getCategory()) // Category 변환
+                // 변경: null 방어 + 값을 즉시 꺼내서 지연 로딩 문제 차단
+                .categoryId(product.getCategory() != null ? product.getCategory().getId() : null)
+                .categoryName(product.getCategory() != null ? product.getCategory().getName() : null)
+//                .category(product.getCategory())
                 .images(product.getImages() != null && !product.getImages().isEmpty() ?
                         product.getImages().stream()
                                 .map(ImageDto::fromImage)
