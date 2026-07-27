@@ -13,6 +13,10 @@ import com.example.coffeeOrderService.domain.product.dto.AddProductRequest;
 
 import com.example.coffeeOrderService.domain.product.dto.UpdateProductRequest;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -58,6 +62,15 @@ public class ProductService {
     }
 
 
+    @Cacheable(value = "product", key = "#id")
+    @Transactional(readOnly = true)
+    public ProductDto getProductDtoById(long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found!"));
+        return convertToDto(product);  // 같은 트랜잭션 안에서 변환 → 프록시 초기화 성공
+    }
+
+
     public Product getProductById(long id) {
         return productRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Product not found!")
@@ -65,6 +78,7 @@ public class ProductService {
     }
 
 
+    @CacheEvict(value = "product", key = "#id")
     public Product updateProduct(long id, UpdateProductRequest request) {
         return productRepository.findById(id)
                 .map(existingProduct -> {
@@ -87,6 +101,7 @@ public class ProductService {
 
 
     //  논리 삭제
+    @CacheEvict(value = "product", key = "#id")
     public void deleteProduct(long id) {
         Product oldProduct = getProductById(id);
 //        if (oldProduct != null && !oldProduct.getOrderItem().isEmpty()) {
