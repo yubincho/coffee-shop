@@ -1,7 +1,7 @@
 package com.example.coffeeOrderService.domain.product.controller;
 
-import com.example.coffeeOrderService.common.dto.pageHandler.PageRequestDto;
-import com.example.coffeeOrderService.common.dto.pageHandler.PageResponseDto;
+import com.example.coffeeOrderService.common.dto.pageHandler.dto.PageRequestDto;
+import com.example.coffeeOrderService.common.dto.pageHandler.dto.PageResponseDto;
 import com.example.coffeeOrderService.domain.product.dto.ProductDto;
 import com.example.coffeeOrderService.common.exception.AlreadyExistsException;
 import com.example.coffeeOrderService.domain.product.entity.Product;

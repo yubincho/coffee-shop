@@ -1,13 +1,14 @@
 package com.example.coffeeOrderService.domain.product.service;
 
-import com.example.coffeeOrderService.common.dto.pageHandler.PageRequestDto;
-import com.example.coffeeOrderService.common.dto.pageHandler.PageResponseDto;
+import com.example.coffeeOrderService.common.dto.pageHandler.dto.PageRequestDto;
+import com.example.coffeeOrderService.common.dto.pageHandler.dto.PageResponseDto;
 import com.example.coffeeOrderService.domain.product.dto.ProductDto;
 import com.example.coffeeOrderService.common.exception.AlreadyExistsException;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.domain.category.entity.Category;
 import com.example.coffeeOrderService.domain.category.repository.CategoryRepository;
 import com.example.coffeeOrderService.domain.product.entity.Product;
+import com.example.coffeeOrderService.common.dto.pageHandler.ScrollPaginationResult;
 import com.example.coffeeOrderService.domain.product.repository.ProductRepository;
 import com.example.coffeeOrderService.domain.product.dto.AddProductRequest;
 
@@ -128,15 +129,15 @@ public class ProductService {
     @Transactional(readOnly = true)
     public PageResponseDto<ProductDto> getList(PageRequestDto pageRequestDto) {
         // ProductRepository에서 커서 기반 페이징 결과를 받음
-        Page<Product> result = productRepository.searchProducts(pageRequestDto);
+        ScrollPaginationResult<Product> result = productRepository.searchProducts(pageRequestDto);
 
         // Product를 ProductDto로 변환
-        List<ProductDto> dtoList = result.stream()
+        List<ProductDto> dtoList = result.getContent().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
 
         // PageResponseDto로 반환, dtoList를 이용해 nextCursor 계산
-        return new PageResponseDto<>(dtoList);
+        return new PageResponseDto<>(dtoList, result.isHasNext());
     }
 
 

@@ -1,6 +1,7 @@
 package com.example.coffeeOrderService.domain.product.repository;
 
-import com.example.coffeeOrderService.common.dto.pageHandler.PageRequestDto;
+import com.example.coffeeOrderService.common.dto.pageHandler.ScrollPaginationResult;
+import com.example.coffeeOrderService.common.dto.pageHandler.dto.PageRequestDto;
 import com.example.coffeeOrderService.domain.product.entity.Product;
 import com.example.coffeeOrderService.domain.product.entity.QProduct;
 import com.example.coffeeOrderService.domain.product.dto.PriceRangeDto;
@@ -10,9 +11,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,7 +28,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
 
     @Override
-    public Page<Product> searchProducts(PageRequestDto pageRequestDto) {
+    public ScrollPaginationResult<Product> searchProducts(PageRequestDto pageRequestDto) {
 
         QProduct qProduct = QProduct.product;
 
@@ -51,12 +49,12 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 .from(qProduct)
                 .where(searchCondition)
                 .orderBy(qProduct.id.asc())
-                .limit(pageSize)
+                .limit(pageSize + 1)
                 .fetch();
 
-        // 조회된 ID가 없으면 빈 페이지 반환 (뒤 쿼리에서 IN () 에러 방지)
-        if (productIds.isEmpty()) {
-            return new PageImpl<>(new ArrayList<>(), PageRequest.of(0, pageSize), 0);
+        boolean hasNext = productIds.size() > pageSize;
+        if (hasNext) {
+            productIds = productIds.subList(0, pageSize);  // 여분 제거
         }
 
         // 2단계: 그 ID들로 images를 fetch join 해서 실제 데이터 조회
@@ -67,18 +65,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 .orderBy(qProduct.id.asc())
                 .fetch();
 
-        // 총 개수
-        long totalCount = queryFactory
-                .select(qProduct.id)
-                .from(qProduct)
-                .where(searchCondition)
-                .fetch()
-                .size();
-
-        // PageImpl을 사용해 List<Product>를 Page<Product>로 변환
-        // 커서 기반 페이징이므로 PageRequest에서 오프셋은 0으로 고정, 페이지 크기만 설정
-        // 커서 기반 페이징에서는 페이지 번호 자체는 필요 으므로 이렇게 처리함
-        return new PageImpl<>(products, PageRequest.of(0, pageSize), totalCount);
+        // 커서 페이징이므로 totalCount 없이 상품 리스트 + hasNext만 반환
+        return new ScrollPaginationResult<>(products, hasNext);
     }
 
     // 동적 검색 조건 생성 메서드
