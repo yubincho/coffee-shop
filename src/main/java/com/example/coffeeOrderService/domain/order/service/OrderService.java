@@ -43,50 +43,31 @@ public class OrderService {
             throw new IllegalStateException("장바구니가 비어 있습니다.");
         }
 
-        Order order = createOrder(cart);  // 주문 생성
-        List<OrderItem> orderItems = createOrderItems(order, cart); // 장바구니 항목을 주문 항목으로 변환
-        order.setOrderItems(new HashSet<>(orderItems));  // 주문 항목 설정
-        order.setTotalAmount(calculateToTalAmount(orderItems));  // 총 금액 계산
-        Order orderSaved = orderRepository.save(order); // 주문 저장
+        List<OrderItem> orderItems = createOrderItems(cart);       // 재고 차감 + 항목 생성
+        Order order = Order.createOrder(cart.getUser(), orderItems); // 연결 + 총액까지 엔티티가 담당
+        Order orderSaved = orderRepository.save(order);
 
-        cartService.clearCart(cart.getId()); // 장바구니 비우기
-
+        cartService.clearCart(cart.getId());  // 장바구니 삭제
         return orderSaved;
     }
 
-    private BigDecimal calculateToTalAmount(List<OrderItem> orderItems) {
-        return orderItems.stream()
-                .map(item -> item.getPrice().multiply(new BigDecimal(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    private Order createOrder(Cart cart) {
-        return Order.builder()
-                .user(cart.getUser())
-                .orderStatus(OrderStatus.PENDING)  // 임시 주문 상태
-                .orderDate(LocalDate.now())
-                .build();
-    }
-
-    // Cart 객체에서 **장바구니 항목(CartItem)**을 가져와, 이를 **주문 항목(OrderItem)**으로 변환
-    private List<OrderItem> createOrderItems(Order order, Cart cart) {
+    // order 인자 제거: order 연결은 팩토리가 담당
+    private List<OrderItem> createOrderItems(Cart cart) {
         return cart.getCartItems().stream()
                 .map(cartItem -> {
-                    // 비관적 락으로 product를 다시 조회 — 이 순간 DB 행에 쓰기 락이 걸림
                     Product product = productRepository.findByIdWithPessimisticLock(
                                     cartItem.getProduct().getId())
                             .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-                    product.removeStock(cartItem.getQuantity());  // 락 걸린 상태에서 검증+차감
-                    // productRepository.save() 불필요 — @Transactional 더티 체킹으로 자동 반영
+                    product.removeStock(cartItem.getQuantity());
 
-                    return new OrderItem(
-                            order,
-                            product,                          // 락으로 조회한 product를 그대로 사용
-                            cartItem.getQuantity(),
-                            cartItem.getUnitPrice()
-                    );
-                }).toList();
+                    return OrderItem.builder()   // order는 넣지 않음
+                            .product(product)
+                            .quantity(cartItem.getQuantity())
+                            .price(cartItem.getUnitPrice())
+                            .build();
+                })
+                .toList();
     }
 
 

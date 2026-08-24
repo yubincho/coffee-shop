@@ -55,19 +55,6 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<PaymentHistory> paymentHistories = new ArrayList<>(); // 결제내역과 일대다
 
-    // 주문을 확정하는 메서드
-    public void confirmOrder() {
-        this.orderStatus = OrderStatus.CONFIRMED;
-    }
-
-    // 결제 완료 시 결제 식별자 업데이트
-    public void setPaymentCompleted(String impUid) {
-        this.paymentStatus = true;
-        this.impUid = impUid;  // imp_uid 저장
-    }
-
-    /** *************************************************/
-
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderItem> orderItems = new HashSet<>();
 
@@ -81,4 +68,49 @@ public class Order {
         this.orderStatus = orderStatus;
         this.user = user;
     }
+
+    /** *************************************************/
+
+    // 연관관계 편의 메서드: OrderItem을 추가하면서 양방향 맞춤
+    public void addOrderItem(OrderItem orderItem) {
+        this.orderItems.add(orderItem);
+        orderItem.setOrder(this);
+    }
+
+    // 정적 팩토리 메서드: 주문 생성 + 아이템 연결 + 총액 계산을 한 곳에서
+    public static Order createOrder(User user, List<OrderItem> orderItems) {
+        Order order = Order.builder()
+                .user(user)
+                .orderStatus(OrderStatus.PENDING)
+                .orderDate(LocalDate.now())
+                .build();
+
+        for (OrderItem orderItem : orderItems) {
+            order.addOrderItem(orderItem);  // 편의 메서드로 양방향 연결
+        }
+
+        order.totalAmount = order.calculateTotalAmount();  // 내부에서 총액 계산
+        return order;
+    }
+
+    // 총 금액 계산 (기존 서비스의 calculateToTalAmount를 엔티티 안으로 이동)
+    private BigDecimal calculateTotalAmount() {
+        return this.orderItems.stream()
+                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+
+    // 주문을 확정하는 메서드
+    public void confirmOrder() {
+        this.orderStatus = OrderStatus.CONFIRMED;
+    }
+
+    // 결제 완료 시 결제 식별자 업데이트
+    public void setPaymentCompleted(String impUid) {
+        this.paymentStatus = true;
+        this.impUid = impUid;  // imp_uid 저장
+    }
+
+
 }
