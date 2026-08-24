@@ -1,6 +1,7 @@
 package com.example.coffeeOrderService.domain.image.entity;
 
 import com.example.coffeeOrderService.domain.product.entity.Product;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ public class Image {
     private Blob image;
     private String downloadUrl;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;

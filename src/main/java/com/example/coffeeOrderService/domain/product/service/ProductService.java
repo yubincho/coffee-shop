@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
 
 
+    @CacheEvict(value = "productList", allEntries = true)
     public Product addProduct(AddProductRequest request) {
         if (isProductExists(request.getName(), request.getBrand())) {
             throw new AlreadyExistsException("Product already exists");
@@ -79,7 +81,10 @@ public class ProductService {
     }
 
 
-    @CacheEvict(value = "product", key = "#id")
+    @Caching(evict = {
+            @CacheEvict(value = "product", key = "#id"),
+            @CacheEvict(value = "productList", allEntries = true)
+    })
     public Product updateProduct(long id, UpdateProductRequest request) {
         return productRepository.findById(id)
                 .map(existingProduct -> {
@@ -126,6 +131,12 @@ public class ProductService {
 
 
     // 페이징 + 검색 적용
+    @Cacheable(
+            value = "productList",
+            key = "'cursor:' + (#pageRequestDto.cursor ?: 'first') " +
+                    "+ ':size:' + (#pageRequestDto.size ?: 10) " +
+                    "+ ':keyword:' + (#pageRequestDto.keyword ?: '')"
+    )
     @Transactional(readOnly = true)
     public PageResponseDto<ProductDto> getList(PageRequestDto pageRequestDto) {
         // ProductRepository에서 커서 기반 페이징 결과를 받음

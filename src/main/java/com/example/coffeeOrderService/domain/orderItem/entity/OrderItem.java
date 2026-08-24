@@ -2,6 +2,7 @@ package com.example.coffeeOrderService.domain.orderItem.entity;
 
 import com.example.coffeeOrderService.domain.order.entity.Order;
 import com.example.coffeeOrderService.domain.product.entity.Product;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,10 +27,12 @@ public class OrderItem {
 
     /** *************************************************/
 
+    @JsonIgnore   // Order 순환 방지
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
 
+    @JsonIgnore   // Product 순환 방지
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = true) // nullable = true로 설정)
     private Product product;

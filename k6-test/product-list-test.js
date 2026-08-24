@@ -1,3 +1,6 @@
+// 레디스 적용 전 & 후 모두 동일하게 테스트 하기
+// 첫 페이지 반복 조회 기준
+
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 

@@ -2,11 +2,13 @@ package com.example.coffeeOrderService.common.dto.pageHandler.dto;
 
 import com.example.coffeeOrderService.domain.product.dto.ProductDto;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 
 @Data
+@NoArgsConstructor  // Jackson 역직렬화용 기본 생성자 추가
 public class PageResponseDto<T> {
 
     private List<T> data;

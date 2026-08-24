@@ -14,10 +14,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)  // ← 명시한 것만 포함
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"category", "images", "orderItem"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -25,6 +25,7 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include  // ← id만 포함!
     private Long id;
 
     private String name;
@@ -47,9 +48,11 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "product")
     private List<OrderItem> orderItem;
 
