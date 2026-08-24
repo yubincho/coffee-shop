@@ -3,6 +3,7 @@ package com.example.coffeeOrderService.service;
 import com.example.coffeeOrderService.domain.product.entity.Product;
 import com.example.coffeeOrderService.domain.product.repository.ProductRepository;
 import com.example.coffeeOrderService.domain.product.service.OptimisticLockStockFacade;
+import com.example.coffeeOrderService.domain.product.service.RedissonLockStockFacade;
 import com.example.coffeeOrderService.domain.product.service.StockService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +30,9 @@ public class StockLockPerformanceTest {
 
     @Autowired
     private OptimisticLockStockFacade optimisticLockStockFacade;
+
+    @Autowired
+    private RedissonLockStockFacade redissonLockStockFacade;
 
     private Long productId;
 
@@ -109,4 +113,35 @@ public class StockLockPerformanceTest {
 
         System.out.println("=== 낙관적 락 소요 시간: " + (end - start) + "ms ===");
     }
+
+    @Test
+    void Redisson_분산락_성능_측정() throws InterruptedException {
+        ExecutorService executorService = Executors.newFixedThreadPool(POOL_SIZE);
+        CountDownLatch latch = new CountDownLatch(THREAD_COUNT);
+
+        long start = System.currentTimeMillis();
+
+        for (int i = 0; i < THREAD_COUNT; i++) {
+            executorService.submit(() -> {
+                try {
+                    redissonLockStockFacade.removeStock(productId, 1);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+        long end = System.currentTimeMillis();
+
+        executorService.shutdown();
+
+        Product product = productRepository.findById(productId).orElseThrow();
+        assertThat(product.getInventory()).isEqualTo(0);
+
+        System.out.println("=== Redisson 분산 락 소요 시간: " + (end - start) + "ms ===");
+    }
+
 }

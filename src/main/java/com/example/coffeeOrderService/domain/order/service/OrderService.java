@@ -1,5 +1,6 @@
 package com.example.coffeeOrderService.domain.order.service;
 
+import com.example.coffeeOrderService.domain.cartItem.repository.CartItemRepository;
 import com.example.coffeeOrderService.domain.order.dto.OrderDto;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.domain.cart.entity.Cart;
@@ -32,6 +33,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final CartItemRepository cartItemRepository;
     private final CartService cartService;
 
 
@@ -160,6 +162,23 @@ public class OrderService {
         OrderDto orderDto = OrderDto.toDto(order);
         return orderDto;
 //        return modelMapper.map(order, OrderDto.class);
+    }
+
+
+    // 주문에 포함될 상품 ID들을 조회 (락 획득용, 데드락 방지 위해 정렬)
+    // 중복 제거 + 오름차순 정렬해서 반환
+    @Transactional(readOnly = true)
+    public List<Long> findProductIdsForOrder(Long userId) {
+        List<Long> productIds = cartItemRepository.findProductIdsByUserId(userId);
+
+        if (productIds.isEmpty()) {
+            throw new IllegalStateException("장바구니가 비어 있습니다.");
+        }
+
+        return productIds.stream()
+                .distinct()   // 같은 상품 중복 제거 (락 두 번 잡지 않도록)
+                .sorted()     // 오름차순 정렬 → 데드락 방지
+                .toList();
     }
 
 }

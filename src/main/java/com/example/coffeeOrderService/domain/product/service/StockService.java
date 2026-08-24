@@ -38,4 +38,14 @@ public class StockService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         product.removeStock(quantity);
     }
+
+
+    // Redis 락 버전에서 쓸 순수 재고 차감 (락은 Facade가 트랜잭션 밖에서 담당)
+    @Transactional
+    public void removeStockWithRedisLock(Long productId, int quantity) {
+        Product product = productRepository.findById(productId)  // 락 없는 일반 조회
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        product.removeStock(quantity);
+        // 더티 체킹으로 자동 반영
+    }
 }

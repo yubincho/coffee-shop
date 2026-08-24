@@ -4,6 +4,7 @@ import com.example.coffeeOrderService.domain.order.dto.OrderDto;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
 import com.example.coffeeOrderService.domain.order.entity.Order;
 
+import com.example.coffeeOrderService.domain.order.service.OrderLockFacade;
 import com.example.coffeeOrderService.domain.payment.dto.RequestOrder;
 import com.example.coffeeOrderService.common.dto.response.ApiResponse;
 import com.example.coffeeOrderService.domain.cart.service.CartService;
@@ -29,6 +30,7 @@ public class OrderController {
 
     private final OrderService orderService;
     private final CartService cartService;
+    private final OrderLockFacade orderLockFacade;
     private final HttpSession httpSession;
 
 
@@ -37,7 +39,8 @@ public class OrderController {
                                          // @RequestParam Long userId
 //        Long userId = 1L;  //
         try {
-            Order temporaryOrder  = orderService.placeOrder(userId);
+            //Order temporaryOrder  = orderService.placeOrder(userId);  // 비관적 락
+            Order temporaryOrder = orderLockFacade.placeOrderWithLock(userId);   // Redisson 락
             OrderDto orderDto = orderService.convertToDto(temporaryOrder);
 
             log.debug("Order placed successfully for user: {}", userId);

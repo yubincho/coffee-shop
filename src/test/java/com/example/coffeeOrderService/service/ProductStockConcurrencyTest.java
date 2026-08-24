@@ -3,6 +3,7 @@ package com.example.coffeeOrderService.service;
 import com.example.coffeeOrderService.domain.product.entity.Product;
 import com.example.coffeeOrderService.domain.product.repository.ProductRepository;
 import com.example.coffeeOrderService.domain.product.service.OptimisticLockStockFacade;
+import com.example.coffeeOrderService.domain.product.service.RedissonLockStockFacade;
 import com.example.coffeeOrderService.domain.product.service.StockService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +30,9 @@ public class ProductStockConcurrencyTest {
 
     @Autowired
     private OptimisticLockStockFacade optimisticLockStockService;
+
+    @Autowired
+    private RedissonLockStockFacade redissonLockStockFacade;
 
     private Long productId;
 
@@ -119,6 +123,31 @@ public class ProductStockConcurrencyTest {
         Product product = productRepository.findById(productId).orElseThrow();
         assertThat(product.getInventory()).isEqualTo(0);
     }
+
+    @Test
+    void Redisson_락_동시에_100개_주문하면_재고가_0이_된다() throws InterruptedException {
+        int threadCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    redissonLockStockFacade.removeStock(productId, 1);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+
+        Product product = productRepository.findById(productId).orElseThrow();
+        assertThat(product.getInventory()).isEqualTo(0);
+    }
+
 
 
 }
