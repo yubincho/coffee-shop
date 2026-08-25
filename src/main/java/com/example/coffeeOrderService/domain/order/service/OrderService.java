@@ -45,12 +45,51 @@ public class OrderService {
             throw new IllegalStateException("장바구니가 비어 있습니다.");
         }
 
-        List<OrderItem> orderItems = createOrderItems(cart);       // 재고 차감 + 항목 생성
+        List<OrderItem> orderItems = createOrderItemsForRedisson(cart, true);  // 비관적 락 유지
+        // 또는 List<OrderItem> orderItems = createOrderItems(cart);   // 재고 차감 + 항목 생성
         Order order = Order.createOrder(cart.getUser(), orderItems); // 연결 + 총액까지 엔티티가 담당
         Order orderSaved = orderRepository.save(order);
 
         cartService.clearCart(cart.getId());  // 장바구니 삭제
         return orderSaved;
+    }
+
+    @Transactional
+    public Order placeOrderForRedisson(Long userId) {
+        Cart cart = cartService.getCartByUserId(userId);
+
+        if (cart == null || cart.getCartItems().isEmpty()) {
+            throw new IllegalStateException("장바구니가 비어 있습니다.");
+        }
+
+        List<OrderItem> orderItems = createOrderItemsForRedisson(cart, false);  // 일반 조회 (비관적 락 X)
+        Order order = Order.createOrder(cart.getUser(), orderItems);
+
+        Order orderSaved = orderRepository.save(order);
+        cartService.clearCart(cart.getId());
+        return orderSaved;
+    }
+
+    // Redisson 락 경로 (Facade에서 호출 — 비관적 락 없이 일반 조회)
+    private List<OrderItem> createOrderItemsForRedisson(Cart cart, boolean usePessimisticLock) {
+        return cart.getCartItems().stream()
+                .map(cartItem -> {
+                    Long productId = cartItem.getProduct().getId();
+
+                    Product product = usePessimisticLock ? productRepository.findByIdWithPessimisticLock(productId)
+                            .orElseThrow(() -> new ResourceNotFoundException("Product not found"))
+                            : productRepository.findById(productId)
+                            .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+                    product.removeStock(cartItem.getQuantity());
+
+                    return OrderItem.builder()
+                            .product(product)
+                            .quantity(cartItem.getQuantity())
+                            .price(cartItem.getUnitPrice())
+                            .build();
+                })
+                .toList();
     }
 
     // order 인자 제거: order 연결은 팩토리가 담당

@@ -38,7 +38,7 @@ public class OrderLockFacade {
             }
 
             // 3) 락을 다 잡은 상태에서 트랜잭션 실행 (재고 차감)
-            return orderService.placeOrder(userId);
+            return orderService.placeOrderForRedisson(userId);
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
