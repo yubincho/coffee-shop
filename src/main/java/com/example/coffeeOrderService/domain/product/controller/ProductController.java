@@ -9,9 +9,12 @@ import com.example.coffeeOrderService.domain.product.dto.AddProductRequest;
 import com.example.coffeeOrderService.domain.product.dto.UpdateProductRequest;
 import com.example.coffeeOrderService.common.dto.response.ApiResponse;
 import com.example.coffeeOrderService.domain.product.service.ProductService;
+import com.example.coffeeOrderService.domain.product.service.document.ProductIndexService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.*;
@@ -24,6 +27,7 @@ import static org.springframework.http.HttpStatus.*;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductIndexService productIndexService;
 
 
 //    @GetMapping("/all")
@@ -32,6 +36,14 @@ public class ProductController {
 //        ApiResponse<Page<ProductDto>> response = new ApiResponse<>("All products successfully", productDtos);
 //        return ResponseEntity.ok(response);
 //    }
+
+    // 관리자용 API
+    @PostMapping("/admin/products/reindex")
+    public ResponseEntity<String> reindex() {
+        long count = productIndexService.reindexAll();
+        return ResponseEntity.ok("색인 완료: " + count + "건");
+    }
+
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllProducts(PageRequestDto pageRequestDto) {

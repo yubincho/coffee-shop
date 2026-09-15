@@ -5,6 +5,7 @@ import com.example.coffeeOrderService.common.dto.pageHandler.dto.PageRequestDto;
 import com.example.coffeeOrderService.domain.product.entity.Product;
 import com.example.coffeeOrderService.domain.product.entity.QProduct;
 import com.example.coffeeOrderService.domain.product.dto.PriceRangeDto;
+import com.example.coffeeOrderService.domain.product.repository.document.ProductSearchQueryRepository;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -21,9 +22,12 @@ import java.util.List;
 public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+    private final ProductSearchQueryRepository productSearchQueryRepository;
 
-    public ProductRepositoryImpl(EntityManager entityManager) {
+    public ProductRepositoryImpl(EntityManager entityManager,
+                                 ProductSearchQueryRepository productSearchQueryRepository) {
         this.queryFactory = new JPAQueryFactory(entityManager);
+        this.productSearchQueryRepository = productSearchQueryRepository;
     }
 
 
@@ -35,26 +39,34 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         Long cursor = pageRequestDto.getCursor();  // 커서 값 (마지막 조회된 Product의 ID)
         int pageSize = (pageRequestDto.getSize() != null) ? pageRequestDto.getSize() : 10; // 페이지 크기
 
-        BooleanExpression searchCondition = getSearchCondition(qProduct, pageRequestDto)
-                .and(qProduct.deleted.isFalse()); // 논리 삭제되지 않은 상품만 조회
-
-        // 커서가 있으면 커서보다 큰 ID의 제품만 조회
-        if (cursor != null) {
-            searchCondition = searchCondition.and(qProduct.id.gt(cursor));
-        }
+//        BooleanExpression searchCondition = getSearchCondition(qProduct, pageRequestDto)
+//                .and(qProduct.deleted.isFalse()); // 논리 삭제되지 않은 상품만 조회
+//
+//        // 커서가 있으면 커서보다 큰 ID의 제품만 조회
+//        if (cursor != null) {
+//            searchCondition = searchCondition.and(qProduct.id.gt(cursor));
+//        }
 
         // 1단계: 커서 페이징으로 '상품 ID만' 먼저 조회 (limit 정확성 보장)
-        List<Long> productIds = queryFactory
-                .select(qProduct.id)
-                .from(qProduct)
-                .where(searchCondition)
-                .orderBy(qProduct.id.asc())
-                .limit(pageSize + 1)
-                .fetch();
+//        List<Long> productIds = queryFactory
+//                .select(qProduct.id)
+//                .from(qProduct)
+//                .where(searchCondition)
+//                .orderBy(qProduct.id.asc())
+//                .limit(pageSize + 1)
+//                .fetch();
+
+        // 1단계: ES에서 상품 ID 조회 (size+1)
+        List<Long> productIds = productSearchQueryRepository.searchProductIds(
+                pageRequestDto.getKeyword(), cursor, pageSize);
 
         boolean hasNext = productIds.size() > pageSize;
         if (hasNext) {
             productIds = productIds.subList(0, pageSize);  // 여분 제거
+        }
+
+        if (productIds.isEmpty()) {
+            return new ScrollPaginationResult<>(List.of(), false);
         }
 
         // 2단계: 그 ID들로 images를 fetch join 해서 실제 데이터 조회

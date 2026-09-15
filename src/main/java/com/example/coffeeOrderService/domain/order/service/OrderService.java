@@ -35,6 +35,7 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
     private final CartService cartService;
+    private final OrderStatusService orderStatusService;
 
 
     @Transactional
@@ -141,7 +142,7 @@ public class OrderService {
 //    }
 
     @Transactional
-    public Order completeOrder(RequestOrder requestOrder) {
+    public OrderDto completeOrder(RequestOrder requestOrder) {
         // 주문을 데이터베이스에서 찾음
         Order order = orderRepository.findById(requestOrder.getOrderId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
@@ -166,7 +167,10 @@ public class OrderService {
         order.setMerchantUid(generateMerchantUid());
 
         // 변경된 주문 정보 저장
-        return orderRepository.save(order);
+        Order saved = orderRepository.save(order);
+
+        orderStatusService.evict(saved.getOrderId());  // 👈 상태 바뀌었으니 캐시 무효화
+        return convertToDto(saved);  // 👈 트랜잭션 안에서 변환 → 지연 로딩 됨
     }
 
 

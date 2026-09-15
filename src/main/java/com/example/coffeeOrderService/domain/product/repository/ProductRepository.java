@@ -16,6 +16,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Queryds
 
     Page<Product> findAll(Pageable pageable);
 
+    Page<Product> findByDeletedFalse(Pageable pageable);  // 삭제 안 된 상품을 페이지 단위로 읽기
+
     boolean existsByNameAndBrand(String name, String brand);
 
     // 비관적 락: 조회하는 순간 해당 행에 쓰기 락을 건다

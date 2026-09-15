@@ -2,9 +2,11 @@ package com.example.coffeeOrderService.domain.order.controller;
 
 import com.example.coffeeOrderService.domain.order.dto.OrderDto;
 import com.example.coffeeOrderService.common.exception.ResourceNotFoundException;
+import com.example.coffeeOrderService.domain.order.dto.OrderStatusCache;
 import com.example.coffeeOrderService.domain.order.entity.Order;
 
 import com.example.coffeeOrderService.domain.order.service.OrderLockFacade;
+import com.example.coffeeOrderService.domain.order.service.OrderStatusService;
 import com.example.coffeeOrderService.domain.payment.dto.RequestOrder;
 import com.example.coffeeOrderService.common.dto.response.ApiResponse;
 import com.example.coffeeOrderService.domain.cart.service.CartService;
@@ -32,6 +34,7 @@ public class OrderController {
     private final CartService cartService;
     private final OrderLockFacade orderLockFacade;
     private final HttpSession httpSession;
+    private final OrderStatusService orderStatusService;
 
 
     @PostMapping("/user/place-order")
@@ -60,14 +63,9 @@ public class OrderController {
      */
     @PostMapping("/done")
     public ResponseEntity<Object> completeOrder(@RequestBody RequestOrder requestOrder) {
-        Order completedOrder = orderService.completeOrder(requestOrder);
-
-        // 주문 완료 후 DTO로 변환하여 응답
-        OrderDto orderDto = orderService.convertToDto(completedOrder);
-
+        OrderDto orderDto = orderService.completeOrder(requestOrder);
         return ResponseEntity.ok(orderDto);
     }
-
 
 
     /** ************************************************************************************* */
@@ -94,5 +92,27 @@ public class OrderController {
         }
     }
 
+
+    // (결제) 상태 조회 - 캐시 적용
+    @GetMapping("/{orderId}/status")
+    public ResponseEntity<ApiResponse> getOrderStatus(@PathVariable Long orderId) {
+        try {
+            OrderStatusCache status = orderStatusService.getOrderStatus(orderId);
+            return ResponseEntity.ok().body(new ApiResponse("Success!", status));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No Order found!", e.getMessage()));
+        }
+    }
+
+    // (결제) 상태 조회 - 캐시 미적용
+    @GetMapping("/{orderId}/status-nocache")
+    public ResponseEntity<ApiResponse> getOrderStatusNoCache(@PathVariable Long orderId) {
+        try {
+            OrderStatusCache status = orderStatusService.getOrderStatusNoCache(orderId);
+            return ResponseEntity.ok().body(new ApiResponse("Success!", status));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No Order found!", e.getMessage()));
+        }
+    }
 
 }

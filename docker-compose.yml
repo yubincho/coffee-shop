@@ -1,4 +1,4 @@
-version: '3'
+#version: '3'  # 버전 명시 : 옛날 버전, 실행하면 경고 뜸
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -45,6 +45,9 @@ services:
     environment:
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin1234
+
     volumes:
       - grafana-data:/var/lib/grafana
     restart: unless-stopped
@@ -58,5 +61,22 @@ services:
     restart: unless-stopped
 
 
+  elasticsearch:
+    build:
+      context: ./elasticsearch    # Dockerfile 위치
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node       # 개발용 단일 노드
+      - xpack.security.enabled=false     # 로컬 개발이라 보안 비활성화
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # 힙 512MB 제한
+    ports:
+      - "9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    restart: unless-stopped
+
+
+
 volumes:
   grafana-data:                          # 파일 맨 아래에 추가
+  es-data:
